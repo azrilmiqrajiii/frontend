@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import useAuth from "../context/useAuth";
 import FormLogin from "../components/Fragments/FormLogin";
-import AuthLayouts from "../components/Layouts/authLayouts";
+import AuthLayouts from "../components/Layouts/AuthLayouts";
 
 const LoginPage = () => {
   const { user, loading } = useAuth();
