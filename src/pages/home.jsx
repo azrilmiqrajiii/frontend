@@ -6,7 +6,7 @@ export default function HomePage() {
   const [menus, setMenus] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/menus")
+    fetch("https://backend-production-af14.up.railway.app/api/menus")
       .then((res) => res.json())
       .then((data) => setMenus(data))
       .catch((err) => console.error(err));
