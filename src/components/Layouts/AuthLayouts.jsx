@@ -2,7 +2,7 @@ import logo from "/images/logo.png";
 
 const AuthLayouts = ({ children, title }) => {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#0A2540] via-[#123B6D] to-[#1E4F91] px-4">
+    <div className="min-h-screen w-full flex items-center justify-center bg-lienar-to-br from-[#0A2540] via-[#123B6D] to-[#1E4F91] px-4">
       <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg bg-white rounded-2xl shadow-xl p-6 sm:p-8 lg:p-10">
         <div className="flex justify-center mb-4">
           <img
