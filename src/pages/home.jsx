@@ -6,7 +6,7 @@ export default function HomePage() {
   const [menus, setMenus] = useState([]);
 
   useEffect(() => {
-    fetch("https://backend-production-8db8.up.railway.app/api/menus")
+    fetch(import.meta.env.VITE_API_URL + "/api/menus")
       .then((res) => res.json())
       .then((data) => setMenus(data))
       .catch((err) => console.error(err));
@@ -65,7 +65,7 @@ export default function HomePage() {
               className="bg-white rounded-lg shadow-md hover:shadow-xl transition overflow-hidden text-center"
             >
               <img
-                src={`http://localhost:5000${menu.image}`}
+                src={menu.image}
                 alt={menu.title}
                 className="h-40 w-full object-cover"
               />
