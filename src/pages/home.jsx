@@ -18,7 +18,7 @@ export default function HomePage() {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center bg-no-repeat"
+      className="min-h-screen bg-cover bg-center bg-no-repeat flex flex-col"
       style={{ backgroundImage: "url('/images/bg-nature.webp')" }}
     >
       <div className="flex justify-end gap-2 px-4 pt-4 md:px-10">
@@ -26,13 +26,13 @@ export default function HomePage() {
         <img src="/images/uk.png" className="w-7 h-5 cursor-pointer" />
       </div>
 
-      <nav className="mx-4 mt-4 rounded-2xl bg-slate-700 text-white md:mx-10">
-        <div className="flex items-center justify-between px-5 py-4">
+      <nav className="mx-4 mt-4 rounded-full bg-[#0F3D62]/90 text-white md:mx-10 backdrop-blur">
+        <div className="flex items-center justify-between px-6 py-3">
           <div className="flex items-center gap-3">
             <img src="/images/header.png" className="w-10 md:w-12" />
             <div className="text-xs md:text-sm font-semibold leading-tight">
               SATUAN PENJAMINAN MUTU
-              <div className="font-light">POLTEKPAR LOMBOK</div>
+              <div className="font-light">POLITEKNIK PARIWISATA LOMBOK</div>
             </div>
           </div>
 
@@ -44,10 +44,10 @@ export default function HomePage() {
             )}
           </div>
 
-          <ul className="hidden md:flex items-center gap-8 text-sm">
-            <li className="hover:text-sky-300 cursor-pointer">Home</li>
-            <li className="hover:text-sky-300 cursor-pointer">About</li>
-            <li className="hover:text-sky-300 cursor-pointer">More</li>
+          <ul className="hidden md:flex items-center gap-10 text-sm font-medium">
+            <li className="hover:text-sky-300 cursor-pointer">HOME</li>
+            <li className="hover:text-sky-300 cursor-pointer">ABOUT</li>
+            <li className="hover:text-sky-300 cursor-pointer">MORE</li>
             <Link to="/login">
               <ArrowRightOnRectangleIcon className="w-5 hover:text-sky-300" />
             </Link>
@@ -55,10 +55,10 @@ export default function HomePage() {
         </div>
 
         {open && (
-          <div className="flex flex-col gap-4 px-5 pb-5 text-sm md:hidden">
-            <span>Home</span>
-            <span>About</span>
-            <span>More</span>
+          <div className="flex flex-col gap-4 px-6 pb-5 text-sm md:hidden">
+            <span>HOME</span>
+            <span>ABOUT</span>
+            <span>MORE</span>
             <Link to="/login" className="flex items-center gap-2">
               <ArrowRightOnRectangleIcon className="w-5" /> Login
             </Link>
@@ -66,32 +66,37 @@ export default function HomePage() {
         )}
       </nav>
 
-      <section className="mx-auto max-w-7xl px-4 py-12">
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+      <section className="flex-1 flex flex-col items-center justify-center px-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-5xl w-full mt-14">
           {menus.map((m) => (
             <div
               key={m._id}
-              className="overflow-hidden rounded-xl bg-white shadow hover:shadow-xl transition"
+              className="bg-white/90 rounded-xl shadow-lg hover:shadow-2xl transition text-center overflow-hidden"
             >
-              <img src={m.image} className="h-32 w-full object-cover sm:h-40" />
-              <div className="p-3 text-center text-sm font-medium text-gray-700">
+              <img src={m.image} className="h-40 w-full object-cover" />
+              <div className="py-4 text-sm font-semibold text-slate-700">
                 {m.title}
               </div>
             </div>
           ))}
         </div>
-      </section>
 
-      <section className="flex flex-col items-center px-6 pb-20 text-center">
-        <div className="mb-8 rounded-full bg-white/60 px-10 py-3 text-lg backdrop-blur md:text-xl">
-          Excellent Institution
+        <div className="mt-16 flex flex-col items-center gap-6">
+          <div className="relative overflow-hidden rounded-full shadow-md">
+            <div className="px-14 py-3 bg-linear-to-r from-white via-white/95 to-transparent">
+              <span className="text-xl md:text-2xl font-medium text-black whitespace-nowrap">
+                Excellent Institution
+              </span>
+            </div>
+          </div>
+
+          <p className="max-w-3xl text-center text-white text-sm leading-relaxed px-4">
+            The Quality Assurance Unit (SPM) of Politeknik Pariwisata Lombok is
+            responsible for designing, implementing, and evaluating the internal
+            quality assurance system. Its objective is to build a sustainable
+            quality culture in education, research, and community service.
+          </p>
         </div>
-
-        <p className="max-w-3xl text-xs leading-relaxed text-white md:text-sm">
-          The Quality Assurance Unit (SPM) of Politeknik Pariwisata Lombok is
-          responsible for designing, implementing, and evaluating the internal
-          quality assurance system to build a sustainable quality culture.
-        </p>
       </section>
     </div>
   );
