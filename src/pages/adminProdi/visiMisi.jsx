@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import useAuth from "../../context/useAuth";
 import { visiMisiAPI } from "../../api/visiMisi.api";
 import Button from "../../components/Elements/Button";
@@ -14,7 +14,8 @@ export default function VisiMisi() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const load = async () => {
+  const load = useCallback(async () => {
+    if (!user) return;
     const res = await visiMisiAPI.get(user.prodi, year);
     if (res.data) {
       setData(res.data);
@@ -25,11 +26,12 @@ export default function VisiMisi() {
       setVisi("");
       setMisi("");
     }
-  };
+    setFile(null);
+  }, [user, year]);
 
   useEffect(() => {
-    if (user) load();
-  }, [year, user]);
+    load();
+  }, [load]);
 
   const save = async () => {
     setLoading(true);
@@ -48,11 +50,17 @@ export default function VisiMisi() {
     setVisi("");
     setMisi("");
     setData(null);
+    setFile(null);
   };
+
+  const fileLabel = file
+    ? file.name
+    : data?.file
+    ? data.file.split("/").pop()
+    : "Belum ada file";
 
   return (
     <div className="max-w-7xl mx-auto space-y-10">
-      {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
           <h1 className="text-3xl font-bold text-[#0F3D62]">Visi & Misi</h1>
@@ -84,17 +92,14 @@ export default function VisiMisi() {
         </div>
       </div>
 
-      {/* MAIN */}
       <div className="bg-white rounded-3xl shadow-xl p-10 space-y-10">
-        {/* VISI & MISI */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div>
             <p className="text-sm text-slate-500 mb-2">Visi Program Studi</p>
             <textarea
               value={visi}
               onChange={(e) => setVisi(e.target.value)}
-              placeholder="Tuliskan visi  Program Studi..."
-              className="w-full h-50 p-6 rounded-2xl bg-slate-100 focus:ring-2 focus:ring-blue-300 resize-none"
+              className="w-full h-52 p-6 rounded-2xl bg-slate-100 focus:ring-2 focus:ring-blue-300 resize-none"
             />
           </div>
 
@@ -103,13 +108,11 @@ export default function VisiMisi() {
             <textarea
               value={misi}
               onChange={(e) => setMisi(e.target.value)}
-              placeholder="Tuliskan Misi untuk mewujudkan visi..."
-              className="w-full h-50 p-6 rounded-2xl bg-slate-100 focus:ring-2 focus:ring-blue-300 resize-none"
+              className="w-full h-52 p-6 rounded-2xl bg-slate-100 focus:ring-2 focus:ring-blue-300 resize-none"
             />
           </div>
         </div>
 
-        {/* FILE UPLOAD */}
         <div className="space-y-3">
           <p className="text-sm text-slate-500">
             Dokumen pendukung (PDF max 5MB)
@@ -126,12 +129,8 @@ export default function VisiMisi() {
               />
             </label>
 
-            <div className="text-sm text-slate-600 bg-green-200 rounded-md hover:bg-green-400 py-3 px-2">
-              {file
-                ? file.name
-                : data?.file
-                ? data.file.split("/").pop()
-                : "Belum ada file"}
+            <div className="text-sm text-slate-600 bg-green-200 rounded-md py-3 px-3">
+              {fileLabel}
             </div>
           </div>
 
@@ -139,32 +138,26 @@ export default function VisiMisi() {
             <a
               href={data.file}
               target="_blank"
-              className="
-      inline-flex items-center gap-2
-      mt-2 px-4 py-2
-      bg-slate-100 hover:bg-slate-200
-      text-slate-700 rounded-lg
-      text-sm transition
-    "
+              className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm transition"
             >
               📄 Lihat file tersimpan
             </a>
           )}
         </div>
 
-        {/* ACTIONS */}
-        <div className="flex justify-start items-center gap-4 pt-6">
+        <div className="flex gap-4 pt-6">
           <Button
             onClick={save}
             loading={loading}
-            className="px-10 py-3 rounded-xl bg-blue-[#1E6F9F] hover:bg-blue-[#0F3D62]] text-white shadow-lg"
+            className="px-10 py-3 rounded-xl bg-[#1E6F9F] hover:bg-[#0F3D62] text-white shadow-lg"
           >
             {data ? "Update Perubahan" : "Simpan Data"}
           </Button>
+
           {data && (
             <Button
               onClick={remove}
-              className="px-6 py-3 rounded-xl bg-red-500 text-red-600 hover:bg-red-800"
+              className="px-6 py-3 rounded-xl bg-red-500 text-white hover:bg-red-600"
             >
               Hapus
             </Button>
