@@ -137,7 +137,7 @@ export default function VisiMisi() {
 
           {data?.file && (
             <a
-              href={`http://localhost:5000${data.file}`}
+              href={data.file}
               target="_blank"
               className="
       inline-flex items-center gap-2
