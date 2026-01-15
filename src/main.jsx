@@ -9,9 +9,10 @@ import NotFound from "./pages/notFound.jsx";
 import Forbidden from "./pages/forbidden.jsx";
 import Unit from "./pages/unit.jsx";
 import HomePage from "./pages/home.jsx";
-import AdminProdiLayout from "./components/Layouts/AdminProdiLayouts.jsx";
 import Dashboard from "./pages/adminProdi/Dashboard.jsx";
 import VisiMisi from "./pages/adminProdi/visiMisi.jsx";
+import AdminProdiLayouts from "./components/Layouts/AdminProdiLayouts.jsx";
+import Kurikulum from "./pages/adminProdi/kurikulum.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <HomePage />, errorElement: <NotFound /> },
@@ -23,15 +24,15 @@ const router = createBrowserRouter([
     path: "/admin-prodi",
     element: (
       <RequireAuth role="ADMIN_PRODI">
-        <AdminProdiLayout />
+        <AdminProdiLayouts />
       </RequireAuth>
     ),
     children: [
       { index: true, element: <Dashboard /> },
       { path: "visi-misi", element: <VisiMisi /> },
+      { path: "kurikulum", element: <Kurikulum /> },
     ],
   },
-
   {
     path: "/unit",
     element: (

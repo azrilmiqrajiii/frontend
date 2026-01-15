@@ -1,163 +1,110 @@
-import { useEffect, useState, useCallback } from "react";
-import useAuth from "../../context/useAuth";
-import { visiMisiAPI } from "../../api/visiMisi.api";
-import Button from "../../components/Elements/Button";
+import { useEffect, useState, useCallback } from "react"
+import useAuth from "../../context/useAuth"
+import { visiMisiAPI } from "../../api/visiMisi.api"
+import Button from "../../components/Elements/Button"
+import FileDrop from "../../components/Fragments/FileDrop"
 
-const YEARS = ["2020", "2021", "2022", "2023", "2024", "2025", "2026"];
+const YEARS = ["2020","2021","2022","2023","2024","2025","2026"]
 
 export default function VisiMisi() {
-  const { user } = useAuth();
-  const [year, setYear] = useState("2026");
-  const [visi, setVisi] = useState("");
-  const [misi, setMisi] = useState("");
-  const [file, setFile] = useState(null);
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { user } = useAuth()
+  const [year, setYear] = useState("2026")
+  const [visi, setVisi] = useState("")
+  const [misi, setMisi] = useState("")
+  const [file, setFile] = useState(null)
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const load = useCallback(async () => {
-    if (!user) return;
-    const res = await visiMisiAPI.get(user.prodi, year);
+    if (!user) return
+    const res = await visiMisiAPI.get(user.prodi, year)
     if (res.data) {
-      setData(res.data);
-      setVisi(res.data.visi || "");
-      setMisi(res.data.misi || "");
+      setData(res.data)
+      setVisi(res.data.visi || "")
+      setMisi(res.data.misi || "")
     } else {
-      setData(null);
-      setVisi("");
-      setMisi("");
+      setData(null)
+      setVisi("")
+      setMisi("")
     }
-    setFile(null);
-  }, [user, year]);
+    setFile(null)
+  }, [user, year])
 
   useEffect(() => {
-    load();
-  }, [load]);
+    load()
+  }, [load])
 
   const save = async () => {
-    setLoading(true);
-    const f = new FormData();
-    f.append("visi", visi);
-    f.append("misi", misi);
-    f.append("tahun", year);
-    if (file) f.append("file", file);
-    await visiMisiAPI.save(user.prodi, f);
-    await load();
-    setLoading(false);
-  };
+    setLoading(true)
+    const f = new FormData()
+    f.append("visi", visi)
+    f.append("misi", misi)
+    f.append("tahun", year)
+    if (file) f.append("file", file)
+    await visiMisiAPI.save(user.prodi, f)
+    await load()
+    setLoading(false)
+  }
 
   const remove = async () => {
-    await visiMisiAPI.remove(data._id);
-    setVisi("");
-    setMisi("");
-    setData(null);
-    setFile(null);
-  };
-
-  const fileLabel = file
-    ? file.name
-    : data?.file
-    ? data.file.split("/").pop()
-    : "Belum ada file";
+    await visiMisiAPI.remove(data._id)
+    setVisi("")
+    setMisi("")
+    setData(null)
+    setFile(null)
+  }
 
   return (
     <div className="max-w-7xl mx-auto space-y-10">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-[#0F3D62]">Visi & Misi</h1>
-          <p className="text-slate-500">
-            Kelola pernyataan resmi program studi per tahun akademik
-          </p>
+          <p className="text-slate-500">Pernyataan resmi program studi</p>
         </div>
 
-        <div className="flex items-center gap-4">
-          <select
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-            className="px-6 py-3 rounded-xl bg-white shadow focus:ring-2 focus:ring-blue-300"
-          >
-            {YEARS.map((y) => (
-              <option key={y}>{y}</option>
-            ))}
-          </select>
-
-          {data ? (
-            <span className="px-4 py-2 rounded-full text-xs bg-green-100 text-green-700">
-              Sudah ada data
-            </span>
-          ) : (
-            <span className="px-4 py-2 rounded-full text-xs bg-red-500 text-white">
-              Belum ada data
-            </span>
-          )}
-        </div>
+        <select
+          value={year}
+          onChange={(e) => setYear(e.target.value)}
+          className="px-6 py-3 rounded-xl bg-white shadow"
+        >
+          {YEARS.map(y => <option key={y}>{y}</option>)}
+        </select>
       </div>
 
-      <div className="bg-white rounded-3xl shadow-xl p-10 space-y-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div>
-            <p className="text-sm text-slate-500 mb-2">Visi Program Studi</p>
-            <textarea
-              value={visi}
-              onChange={(e) => setVisi(e.target.value)}
-              className="w-full h-52 p-6 rounded-2xl bg-slate-100 focus:ring-2 focus:ring-blue-300 resize-none"
-            />
-          </div>
+      <div className="bg-white rounded-3xl shadow-xl p-10 space-y-8">
+        <textarea
+          value={visi}
+          onChange={(e) => setVisi(e.target.value)}
+          className="w-full h-40 p-6 rounded-2xl bg-slate-100"
+          placeholder="Visi Program Studi"
+        />
 
-          <div>
-            <p className="text-sm text-slate-500 mb-2">Misi Program Studi</p>
-            <textarea
-              value={misi}
-              onChange={(e) => setMisi(e.target.value)}
-              className="w-full h-52 p-6 rounded-2xl bg-slate-100 focus:ring-2 focus:ring-blue-300 resize-none"
-            />
-          </div>
-        </div>
+        <textarea
+          value={misi}
+          onChange={(e) => setMisi(e.target.value)}
+          className="w-full h-40 p-6 rounded-2xl bg-slate-100"
+          placeholder="Misi Program Studi"
+        />
 
-        <div className="space-y-3">
-          <p className="text-sm text-slate-500">
-            Dokumen pendukung (PDF max 5MB)
-          </p>
+        <FileDrop
+          file={file}
+          setFile={setFile}
+          label="Dokumen Pendukung Visi & Misi"
+        />
 
-          <div className="flex items-center gap-4">
-            <label className="px-6 py-3 bg-blue-50 text-blue-700 rounded-xl cursor-pointer hover:bg-blue-100 transition">
-              Pilih File
-              <input
-                type="file"
-                accept="application/pdf"
-                onChange={(e) => setFile(e.target.files[0])}
-                className="hidden"
-              />
-            </label>
-
-            <div className="text-sm text-slate-600 bg-green-200 rounded-md py-3 px-3">
-              {fileLabel}
-            </div>
-          </div>
-
-          {data?.file && (
-            <a
-              href={data.file}
-              target="_blank"
-              className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm transition"
-            >
-              📄 Lihat file tersimpan
-            </a>
-          )}
-        </div>
-
-        <div className="flex gap-4 pt-6">
+        <div className="flex gap-4">
           <Button
             onClick={save}
             loading={loading}
-            className="px-10 py-3 rounded-xl bg-[#1E6F9F] hover:bg-[#0F3D62] text-white shadow-lg"
+            className="px-10 py-3 rounded-xl bg-[#1E6F9F] text-white"
           >
-            {data ? "Update Perubahan" : "Simpan Data"}
+            Simpan
           </Button>
 
           {data && (
             <Button
               onClick={remove}
-              className="px-6 py-3 rounded-xl bg-red-500 text-white hover:bg-red-600"
+              className="px-8 py-3 rounded-xl bg-red-500 text-white"
             >
               Hapus
             </Button>
@@ -165,5 +112,5 @@ export default function VisiMisi() {
         </div>
       </div>
     </div>
-  );
+  )
 }
