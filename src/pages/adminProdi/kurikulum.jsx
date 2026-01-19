@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import useAuth from "../../context/useAuth";
 import { kurikulumAPI } from "../../api/kurikulum.api";
 import Button from "../../components/Elements/Button";
-import { Upload, X } from "lucide-react";
+import { Upload } from "lucide-react";
 import FileDrop from "../../components/Fragments/FileDrop";
 
 const YEARS = ["2024", "2025", "2026"];
@@ -14,14 +14,14 @@ const emptyRow = {
   sksKuliah: "",
   sksSeminar: "",
   sksPraktikum: "",
-  rps: null,
+  rps: "",
 };
 
 export default function Kurikulum() {
   const { user } = useAuth();
   const [year, setYear] = useState("2026");
   const [rows, setRows] = useState([]);
-  const [pdf, setPdf] = useState(null);
+  const [pdf, setPdf] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [dirty, setDirty] = useState(false);
@@ -32,10 +32,11 @@ export default function Kurikulum() {
     try {
       const res = await kurikulumAPI.get(user.prodi, Number(year));
       setRows(res.data?.matkul || []);
-      setPdf(null);
+      setPdf(res.data?.pdf || "");
       setDirty(false);
     } catch {
       setRows([]);
+      setPdf("");
     }
   }, [user, year]);
 
@@ -68,10 +69,9 @@ export default function Kurikulum() {
       if (!r.kode || !r.nama) return `Baris ${i + 1}: Kode & Nama wajib diisi`;
       if (r.sksKuliah === "" || r.sksSeminar === "" || r.sksPraktikum === "")
         return `Baris ${i + 1}: SKS wajib diisi`;
-      if (r.rps && !r.rps.name.match(/\.(xls|xlsx)$/))
-        return `Baris ${i + 1}: RPS harus xls/xlsx`;
+      if (r.rps && !r.rps.match(/\.(xls|xlsx)$/))
+        return `Baris ${i + 1}: RPS harus XLS/XLSX`;
     }
-    if (pdf && !pdf.type.includes("pdf")) return "Dokumen pendukung harus PDF";
     return "";
   };
 
@@ -83,15 +83,12 @@ export default function Kurikulum() {
     }
 
     try {
-      setError("");
       setLoading(true);
+      setError("");
       const f = new FormData();
       f.append("tahun", Number(year));
-      f.append(
-        "matkul",
-        JSON.stringify(rows.map((r) => ({ ...r, rps: undefined }))),
-      );
-      if (pdf) f.append("pdf", pdf);
+      f.append("matkul", JSON.stringify(rows));
+      if (pdf instanceof File) f.append("pdf", pdf);
       await kurikulumAPI.save(user.prodi, f);
       await load();
     } finally {
@@ -124,80 +121,78 @@ export default function Kurikulum() {
         <table className="border-collapse text-sm w-full">
           <thead className="sticky top-0 bg-slate-100 z-10">
             <tr>
-              <th className="border border-slate-300 w-10 text-center font-semibold">
-                No
-              </th>
-              {[
-                "Semester",
-                "Kode",
-                "Nama Mata Kuliah",
-                "SKS K",
-                "SKS S",
-                "SKS P",
-                "RPS",
-              ].map((h) => (
-                <th
-                  key={h}
-                  className="border border-slate-300 px-2 py-1.5 font-semibold text-left"
-                >
-                  {h}
-                </th>
-              ))}
+              <th className="border w-10">No</th>
+              <th className="border px-2">Semester</th>
+              <th className="border px-2">Kode</th>
+              <th className="border px-2">Nama Mata Kuliah</th>
+              <th className="border px-2">SKS K</th>
+              <th className="border px-2">SKS S</th>
+              <th className="border px-2">SKS P</th>
+              <th className="border px-2 w-56">RPS</th>
             </tr>
           </thead>
 
           <tbody>
             {rows.map((r, i) => (
-              <tr
-                key={i}
-                className={`${i % 2 ? "bg-slate-50" : "bg-white"} hover:bg-blue-50/40`}
-              >
-                <td className="border border-slate-300 text-center text-slate-500 bg-slate-50">
-                  {i + 1}
-                </td>
+              <tr key={i} className={i % 2 ? "bg-slate-50" : "bg-white"}>
+                <td className="border text-center">{i + 1}</td>
 
                 {[
-                  ["semester", "w-16 text-center", "text"],
-                  ["kode", "w-24", "text"],
-                  ["nama", "min-w-[280px]", "text"],
-                  ["sksKuliah", "w-14 text-center", "text"],
-                  ["sksSeminar", "w-14 text-center", "text"],
-                  ["sksPraktikum", "w-14 text-center", "text"],
-                ].map(([k, cls, type], idx) => (
-                  <td key={k} className={`border border-slate-300 px-1 ${cls}`}>
+                  ["semester", "w-16 text-center"],
+                  ["kode", "w-24"],
+                  ["nama", "min-w-[260px]"],
+                  ["sksKuliah", "w-14 text-center"],
+                  ["sksSeminar", "w-14 text-center"],
+                  ["sksPraktikum", "w-14 text-center"],
+                ].map(([k, cls], idx) => (
+                  <td key={k} className={`border px-1 ${cls}`}>
                     <input
                       ref={
                         i === rows.length - 1 && idx === 0 ? lastRowRef : null
                       }
-                      type={type}
-                      inputMode={
-                        k.includes("sks") || k === "semester"
-                          ? "numeric"
-                          : "text"
-                      }
                       value={r[k]}
                       onChange={(e) => update(i, k, e.target.value)}
-                      className="w-full bg-transparent outline-none px-1 py-1 focus:bg-blue-50 focus:ring-1 focus:ring-blue-500"
+                      className="w-full bg-transparent outline-none"
                     />
                   </td>
                 ))}
 
-                <td className="border border-slate-300 w-10 text-center">
+                <td className="border px-2 py-1">
                   {r.rps ? (
-                    <button
-                      onClick={() => update(i, "rps", null)}
-                      className="text-red-500 hover:text-red-600"
-                    >
-                      <X size={14} />
-                    </button>
+                    <div className="flex items-center justify-between gap-2">
+                      <a
+                        href={r.rps}
+                        target="_blank"
+                        className="text-xs text-blue-600 underline truncate max-w-40"
+                      >
+                        {r.rps.split("/").pop()}
+                      </a>
+                      <button
+                        onClick={() => update(i, "rps", "")}
+                        className="text-xs px-2 py-1 border border-red-400 text-red-600 rounded"
+                      >
+                        Hapus
+                      </button>
+                    </div>
                   ) : (
-                    <label className="cursor-pointer text-slate-500 hover:text-blue-600">
+                    <label className="inline-flex items-center w-full gap-2 text-xs px-3 py-1.5 border border-dashed border-slate-400 rounded cursor-pointer">
                       <Upload size={14} />
+                      Upload RPS
                       <input
                         type="file"
                         accept=".xls,.xlsx"
                         className="hidden"
-                        onChange={(e) => update(i, "rps", e.target.files[0])}
+                        onChange={async (e) => {
+                          const f = new FormData();
+                          f.append("tahun", year);
+                          f.append("rps", e.target.files[0]);
+                          const res = await kurikulumAPI.uploadRps(
+                            user.prodi,
+                            i,
+                            f,
+                          );
+                          update(i, "rps", res.data.rps);
+                        }}
                       />
                     </label>
                   )}
@@ -208,32 +203,32 @@ export default function Kurikulum() {
         </table>
       </div>
 
-      <div className="flex items-end justify-between gap-6 pt-1">
-        <div className="max-w-sm">
-          <p className="text-xs font-medium text-slate-600 mb-1">
+      <div className="flex justify-between items-end">
+        <div className="max-w-sm space-y-1">
+          <p className="text-xs font-medium text-slate-600">
             Lampiran Kurikulum (PDF · Opsional)
           </p>
+
+          {typeof pdf === "string" && pdf && (
+            <a
+              href={pdf}
+              target="_blank"
+              className="text-xs text-blue-600 underline block"
+            >
+              {pdf.split("/").pop()}
+            </a>
+          )}
+
           <FileDrop
-            file={pdf}
+            file={pdf instanceof File ? pdf : null}
             setFile={setPdf}
             accept="application/pdf"
-            label=""
           />
         </div>
 
         <div className="flex gap-2">
-          <Button
-            onClick={addRow}
-            className="px-3 py-1.5 text-sm bg-slate-500 hover:bg-slate-600"
-          >
-            + Baris
-          </Button>
-          <Button
-            onClick={save}
-            loading={loading}
-            disabled={loading}
-            className="px-4 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white"
-          >
+          <Button onClick={addRow}>+ Baris</Button>
+          <Button onClick={save} loading={loading}>
             Simpan
           </Button>
         </div>
