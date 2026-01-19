@@ -77,11 +77,7 @@ export default function Kurikulum() {
 
   const save = async () => {
     const msg = validate();
-    if (msg) {
-      setError(msg);
-      return;
-    }
-
+    if (msg) return setError(msg);
     try {
       setLoading(true);
       setError("");
@@ -109,7 +105,7 @@ export default function Kurikulum() {
         <select
           value={year}
           onChange={(e) => setYear(e.target.value)}
-          className="border border-slate-300 px-3 py-1.5 text-sm bg-white"
+          className="border border-slate-300 px-3 py-1.5 text-sm bg-white rounded"
         >
           {YEARS.map((y) => (
             <option key={y}>{y}</option>
@@ -117,25 +113,32 @@ export default function Kurikulum() {
         </select>
       </div>
 
-      <div className="overflow-auto border border-slate-300 bg-white">
+      <div className="overflow-auto border border-slate-200 bg-white rounded-md">
         <table className="border-collapse text-sm w-full">
-          <thead className="sticky top-0 bg-slate-100 z-10">
+          <thead className="sticky top-0 bg-slate-50 z-10">
             <tr>
-              <th className="border w-10">No</th>
-              <th className="border px-2">Semester</th>
-              <th className="border px-2">Kode</th>
-              <th className="border px-2">Nama Mata Kuliah</th>
-              <th className="border px-2">SKS K</th>
-              <th className="border px-2">SKS S</th>
-              <th className="border px-2">SKS P</th>
-              <th className="border px-2 w-56">RPS</th>
+              <th className="border border-slate-300 w-10">No</th>
+              <th className="border border-slate-300 px-2">Semester</th>
+              <th className="border border-slate-300 px-2">Kode</th>
+              <th className="border border-slate-300 px-2">Nama Mata Kuliah</th>
+              <th className="border border-slate-300 px-2">SKS K</th>
+              <th className="border border-slate-300 px-2">SKS S</th>
+              <th className="border border-slate-300 px-2">SKS P</th>
+              <th className="border border-slate-300 px-2 w-56">RPS</th>
             </tr>
           </thead>
 
           <tbody>
             {rows.map((r, i) => (
-              <tr key={i} className={i % 2 ? "bg-slate-50" : "bg-white"}>
-                <td className="border text-center">{i + 1}</td>
+              <tr
+                key={i}
+                className={`border-b border-slate-200 hover:bg-slate-100 ${
+                  i % 2 ? "bg-slate-50/50" : "bg-white"
+                }`}
+              >
+                <td className="border-r border-slate-200 text-center">
+                  {i + 1}
+                </td>
 
                 {[
                   ["semester", "w-16 text-center"],
@@ -145,20 +148,24 @@ export default function Kurikulum() {
                   ["sksSeminar", "w-14 text-center"],
                   ["sksPraktikum", "w-14 text-center"],
                 ].map(([k, cls], idx) => (
-                  <td key={k} className={`border px-1 ${cls}`}>
+                  <td key={k} className={`border-r border-slate-200 ${cls}`}>
                     <input
                       ref={
                         i === rows.length - 1 && idx === 0 ? lastRowRef : null
                       }
                       value={r[k]}
                       onChange={(e) => update(i, k, e.target.value)}
-                      className="w-full bg-transparent outline-none"
+                      className="w-full bg-transparent outline-none focus:bg-blue-50 px-1 py-1"
                     />
                   </td>
                 ))}
 
-                <td className="border px-2 py-1">
-                  {r.rps ? (
+                <td className="px-2 py-1">
+                  {dirty ? (
+                    <div className="text-xs text-slate-400 italic">
+                      Simpan kurikulum dulu
+                    </div>
+                  ) : r.rps ? (
                     <div className="flex items-center justify-between gap-2">
                       <a
                         href={r.rps}
@@ -169,13 +176,13 @@ export default function Kurikulum() {
                       </a>
                       <button
                         onClick={() => update(i, "rps", "")}
-                        className="text-xs px-2 py-1 border border-red-400 text-red-600 rounded"
+                        className="text-xs px-2 py-1 border border-red-300 text-red-600 rounded"
                       >
                         Hapus
                       </button>
                     </div>
                   ) : (
-                    <label className="inline-flex items-center w-full gap-2 text-xs px-3 py-1.5 border border-dashed border-slate-400 rounded cursor-pointer">
+                    <label className="inline-flex items-center w-full gap-2 text-xs px-3 py-1.5 border border-dashed border-slate-400 rounded cursor-pointer hover:bg-slate-50">
                       <Upload size={14} />
                       Upload RPS
                       <input
@@ -183,15 +190,19 @@ export default function Kurikulum() {
                         accept=".xls,.xlsx"
                         className="hidden"
                         onChange={async (e) => {
-                          const f = new FormData();
-                          f.append("tahun", year);
-                          f.append("rps", e.target.files[0]);
-                          const res = await kurikulumAPI.uploadRps(
-                            user.prodi,
-                            i,
-                            f,
-                          );
-                          update(i, "rps", res.data.rps);
+                          try {
+                            const f = new FormData();
+                            f.append("tahun", year);
+                            f.append("rps", e.target.files[0]);
+                            const res = await kurikulumAPI.uploadRps(
+                              user.prodi,
+                              i,
+                              f,
+                            );
+                            update(i, "rps", res.data.rps);
+                          } catch {
+                            setError("Upload RPS gagal");
+                          }
                         }}
                       />
                     </label>
