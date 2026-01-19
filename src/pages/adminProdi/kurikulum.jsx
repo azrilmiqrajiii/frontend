@@ -177,7 +177,7 @@ export default function Kurikulum() {
                       }
                       value={r[k]}
                       onChange={(e) => update(i, k, e.target.value)}
-                      className="w-full bg-transparent outline-none px-1 py-[4px] focus:bg-blue-50 focus:ring-1 focus:ring-blue-500"
+                      className="w-full bg-transparent outline-none px-1 py-1 focus:bg-blue-50 focus:ring-1 focus:ring-blue-500"
                     />
                   </td>
                 ))}

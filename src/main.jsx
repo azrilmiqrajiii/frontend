@@ -13,12 +13,26 @@ import Dashboard from "./pages/adminProdi/Dashboard.jsx";
 import VisiMisi from "./pages/adminProdi/visiMisi.jsx";
 import AdminProdiLayouts from "./components/Layouts/AdminProdiLayouts.jsx";
 import Kurikulum from "./pages/adminProdi/kurikulum.jsx";
+import RequireGuest from "./auth/RequireGuest.jsx";
 
 const router = createBrowserRouter([
-  { path: "/", element: <HomePage />, errorElement: <NotFound /> },
-  { path: "/403", element: <Forbidden /> },
+  {
+    path: "/",
+    element: (
+      <RequireGuest>
+        <HomePage />
+      </RequireGuest>
+    ),
+  },
 
-  { path: "/login", element: <LoginPage /> },
+  {
+    path: "/login",
+    element: (
+      <RequireGuest>
+        <LoginPage />
+      </RequireGuest>
+    ),
+  },
 
   {
     path: "/admin-prodi",
@@ -33,6 +47,7 @@ const router = createBrowserRouter([
       { path: "kurikulum", element: <Kurikulum /> },
     ],
   },
+
   {
     path: "/unit",
     element: (
@@ -66,5 +81,5 @@ createRoot(document.getElementById("root")).render(
     <AuthProvider>
       <RouterProvider router={router} />
     </AuthProvider>
-  </StrictMode>
+  </StrictMode>,
 );
