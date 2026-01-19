@@ -23,6 +23,7 @@ const router = createBrowserRouter([
         <HomePage />
       </RequireGuest>
     ),
+    errorElement: <NotFound />,
   },
 
   {
