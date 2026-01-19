@@ -1,229 +1,245 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import useAuth from "../../context/useAuth";
 import { kurikulumAPI } from "../../api/kurikulum.api";
-import FileDrop from "../../components/Fragments/FileDrop";
 import Button from "../../components/Elements/Button";
-import { Plus, Trash2 } from "lucide-react";
+import { Upload, X } from "lucide-react";
+import FileDrop from "../../components/Fragments/FileDrop";
 
-const YEARS = [
-  { value: "20252026", label: "2025 / 2026" },
-  { value: "20242025", label: "2024 / 2025" },
-];
+const YEARS = ["2024", "2025", "2026"];
+
+const emptyRow = {
+  semester: "",
+  kode: "",
+  nama: "",
+  sksKuliah: "",
+  sksSeminar: "",
+  sksPraktikum: "",
+  rps: null,
+};
 
 export default function Kurikulum() {
   const { user } = useAuth();
-  const [year, setYear] = useState("20252026");
-  const [items, setItems] = useState([]);
+  const [year, setYear] = useState("2026");
+  const [rows, setRows] = useState([]);
   const [pdf, setPdf] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [dirty, setDirty] = useState(false);
+  const lastRowRef = useRef(null);
 
   const load = useCallback(async () => {
+    if (!user) return;
     try {
-      const res = await kurikulumAPI.get(user.prodi, year);
-      setItems(res.data?.matkul || []);
+      const res = await kurikulumAPI.get(user.prodi, Number(year));
+      setRows(res.data?.matkul || []);
+      setPdf(null);
+      setDirty(false);
     } catch {
-      setItems([]);
+      setRows([]);
     }
-  }, [user.prodi, year]);
+  }, [user, year]);
 
   useEffect(() => {
     load();
   }, [load]);
 
-  const addItem = () => {
-    setItems([
-      ...items,
-      {
-        semester: "",
-        kode: "",
-        nama: "",
-        sksKuliah: "",
-        sksSeminar: "",
-        sksPraktikum: "",
-        rps: null,
-      },
-    ]);
+  useEffect(() => {
+    lastRowRef.current?.focus();
+  }, [rows.length]);
+
+  const update = (i, k, v) => {
+    const d = [...rows];
+    d[i][k] = v;
+    setRows(d);
+    setDirty(true);
   };
 
-  const update = (i, key, val) => {
-    const copy = [...items];
-    copy[i][key] = val;
-    setItems(copy);
+  const addRow = () => {
+    setRows([...rows, { ...emptyRow }]);
+    setDirty(true);
   };
 
-  const remove = (i) => {
-    setItems(items.filter((_, idx) => idx !== i));
+  const validate = () => {
+    if (!rows.length) return "Minimal 1 mata kuliah";
+    for (let i = 0; i < rows.length; i++) {
+      const r = rows[i];
+      if (!r.semester || isNaN(r.semester))
+        return `Baris ${i + 1}: Semester harus angka`;
+      if (!r.kode || !r.nama) return `Baris ${i + 1}: Kode & Nama wajib diisi`;
+      if (r.sksKuliah === "" || r.sksSeminar === "" || r.sksPraktikum === "")
+        return `Baris ${i + 1}: SKS wajib diisi`;
+      if (r.rps && !r.rps.name.match(/\.(xls|xlsx)$/))
+        return `Baris ${i + 1}: RPS harus xls/xlsx`;
+    }
+    if (pdf && !pdf.type.includes("pdf")) return "Dokumen pendukung harus PDF";
+    return "";
   };
 
   const save = async () => {
+    const msg = validate();
+    if (msg) {
+      setError(msg);
+      return;
+    }
+
     try {
+      setError("");
       setLoading(true);
-      const form = new FormData();
-      form.append("tahun", year);
-      form.append("matkul", JSON.stringify(items));
-      if (pdf) form.append("file", pdf);
-      await kurikulumAPI.save(user.prodi, form);
-      load();
+      const f = new FormData();
+      f.append("tahun", Number(year));
+      f.append(
+        "matkul",
+        JSON.stringify(rows.map((r) => ({ ...r, rps: undefined }))),
+      );
+      if (pdf) f.append("pdf", pdf);
+      await kurikulumAPI.save(user.prodi, f);
+      await load();
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-10 pb-24">
-      <div className="flex justify-between items-end">
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-800">Kurikulum</h1>
-          <p className="text-sm text-slate-500">
-            Kelola struktur mata kuliah dan beban SKS
+          <h1 className="text-lg font-semibold text-slate-800">Kurikulum</h1>
+          <p className="text-xs text-slate-500">
+            {dirty ? "Belum disimpan" : "Data tersimpan"}
           </p>
         </div>
 
         <select
           value={year}
           onChange={(e) => setYear(e.target.value)}
-          className="px-5 py-2.5 rounded-xl bg-white shadow-sm text-sm"
+          className="border border-slate-300 px-3 py-1.5 text-sm bg-white"
         >
           {YEARS.map((y) => (
-            <option key={y.value} value={y.value}>
-              {y.label}
-            </option>
+            <option key={y}>{y}</option>
           ))}
         </select>
       </div>
 
-      <div className="space-y-6">
-        {items.map((m, i) => (
-          <div key={i} className="bg-white rounded-3xl shadow-sm p-6 space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-slate-500">
-                Mata Kuliah #{i + 1}
-              </span>
-              <Trash2
-                size={16}
-                onClick={() => remove(i)}
-                className="text-red-500 cursor-pointer"
-              />
-            </div>
+      <div className="overflow-auto border border-slate-300 bg-white">
+        <table className="border-collapse text-sm w-full">
+          <thead className="sticky top-0 bg-slate-100 z-10">
+            <tr>
+              <th className="border border-slate-300 w-10 text-center font-semibold">
+                No
+              </th>
+              {[
+                "Semester",
+                "Kode",
+                "Nama Mata Kuliah",
+                "SKS K",
+                "SKS S",
+                "SKS P",
+                "RPS",
+              ].map((h) => (
+                <th
+                  key={h}
+                  className="border border-slate-300 px-2 py-1.5 font-semibold text-left"
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
 
-            <div className="grid grid-cols-12 gap-4">
-              <input
-                placeholder="Semester"
-                value={m.semester}
-                onChange={(e) => update(i, "semester", e.target.value)}
-                className="col-span-2 bg-slate-100 rounded-xl px-4 py-3 text-center"
-              />
+          <tbody>
+            {rows.map((r, i) => (
+              <tr
+                key={i}
+                className={`${i % 2 ? "bg-slate-50" : "bg-white"} hover:bg-blue-50/40`}
+              >
+                <td className="border border-slate-300 text-center text-slate-500 bg-slate-50">
+                  {i + 1}
+                </td>
 
-              <input
-                placeholder="Kode Mata Kuliah"
-                value={m.kode}
-                onChange={(e) => update(i, "kode", e.target.value)}
-                className="col-span-3 bg-slate-100 rounded-xl px-4 py-3"
-              />
+                {[
+                  ["semester", "w-16 text-center", "text"],
+                  ["kode", "w-24", "text"],
+                  ["nama", "min-w-[280px]", "text"],
+                  ["sksKuliah", "w-14 text-center", "text"],
+                  ["sksSeminar", "w-14 text-center", "text"],
+                  ["sksPraktikum", "w-14 text-center", "text"],
+                ].map(([k, cls, type], idx) => (
+                  <td key={k} className={`border border-slate-300 px-1 ${cls}`}>
+                    <input
+                      ref={
+                        i === rows.length - 1 && idx === 0 ? lastRowRef : null
+                      }
+                      type={type}
+                      inputMode={
+                        k.includes("sks") || k === "semester"
+                          ? "numeric"
+                          : "text"
+                      }
+                      value={r[k]}
+                      onChange={(e) => update(i, k, e.target.value)}
+                      className="w-full bg-transparent outline-none px-1 py-[4px] focus:bg-blue-50 focus:ring-1 focus:ring-blue-500"
+                    />
+                  </td>
+                ))}
 
-              <input
-                placeholder="Nama Mata Kuliah"
-                value={m.nama}
-                onChange={(e) => update(i, "nama", e.target.value)}
-                className="col-span-7 bg-slate-100 rounded-xl px-4 py-3"
-              />
-
-              <input
-                placeholder="SKS Kuliah"
-                value={m.sksKuliah}
-                onChange={(e) => update(i, "sksKuliah", e.target.value)}
-                className="col-span-2 bg-slate-100 rounded-xl px-4 py-3 text-center"
-              />
-
-              <input
-                placeholder="SKS Seminar"
-                value={m.sksSeminar}
-                onChange={(e) => update(i, "sksSeminar", e.target.value)}
-                className="col-span-2 bg-slate-100 rounded-xl px-4 py-3 text-center"
-              />
-
-              <input
-                placeholder="SKS Praktikum / Lapangan"
-                value={m.sksPraktikum}
-                onChange={(e) => update(i, "sksPraktikum", e.target.value)}
-                className="col-span-3 bg-slate-100 rounded-xl px-4 py-3 text-center"
-              />
-
-              <div className="col-span-5">
-                <FileDrop
-                  file={m.rps}
-                  setFile={(f) => update(i, "rps", f)}
-                  accept=".xlsx,.xls"
-                  label="Upload RPS (Opsional)"
-                />
-              </div>
-            </div>
-          </div>
-        ))}
+                <td className="border border-slate-300 w-10 text-center">
+                  {r.rps ? (
+                    <button
+                      onClick={() => update(i, "rps", null)}
+                      className="text-red-500 hover:text-red-600"
+                    >
+                      <X size={14} />
+                    </button>
+                  ) : (
+                    <label className="cursor-pointer text-slate-500 hover:text-blue-600">
+                      <Upload size={14} />
+                      <input
+                        type="file"
+                        accept=".xls,.xlsx"
+                        className="hidden"
+                        onChange={(e) => update(i, "rps", e.target.files[0])}
+                      />
+                    </label>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-      <button
-        onClick={addItem}
-        className="flex items-center gap-2 text-blue-600 text-sm"
-      >
-        <Plus size={16} /> Tambah Mata Kuliah
-      </button>
-
-      {items.length > 0 && (
-        <div>
-             <div className="bg-white rounded-3xl shadow-sm p-6 space-y-3">
-        <div>
-          <h3 className="text-sm font-semibold text-slate-700">
-            Dokumen Kurikulum (Opsional)
-          </h3>
-          <p className="text-xs text-slate-500">
-            Upload jika tersedia, tidak wajib untuk menyimpan data kurikulum
+      <div className="flex items-end justify-between gap-6 pt-1">
+        <div className="max-w-sm">
+          <p className="text-xs font-medium text-slate-600 mb-1">
+            Lampiran Kurikulum (PDF · Opsional)
           </p>
+          <FileDrop
+            file={pdf}
+            setFile={setPdf}
+            accept="application/pdf"
+            label=""
+          />
         </div>
 
-        <FileDrop
-          file={pdf}
-          setFile={setPdf}
-          accept="application/pdf"
-          label="Upload Dokumen Kurikulum (PDF)"
-        />
+        <div className="flex gap-2">
+          <Button
+            onClick={addRow}
+            className="px-3 py-1.5 text-sm bg-slate-500 hover:bg-slate-600"
+          >
+            + Baris
+          </Button>
+          <Button
+            onClick={save}
+            loading={loading}
+            disabled={loading}
+            className="px-4 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            Simpan
+          </Button>
+        </div>
       </div>
-        <div className="fixed bottom-6 left-0 right-0 z-40">
-          <div className="max-w-300 mx-auto px-6 flex justify-end">
-            <Button
-              onClick={save}
-              disabled={loading}
-              className="
-          group relative
-          px-10 py-4
-          rounded-full
-          bg-linear-to-r from-slate-900 to-slate-700
-          text-white text-sm font-semibold tracking-wide
-          shadow-xl shadow-slate-900/20
-          hover:from-slate-800 hover:to-slate-600
-          transition-all duration-300
-          disabled:opacity-50 disabled:cursor-not-allowed
-        "
-            >
-              <span className="relative z-10">
-                {loading ? "Menyimpan Kurikulum..." : "Simpan Kurikulum"}
-              </span>
 
-              <span
-                className="
-            absolute inset-0
-            rounded-full
-            bg-white/10
-            opacity-0
-            group-hover:opacity-100
-            transition
-          "
-              />
-            </Button>
-          </div>
-        </div>
-        </div>
-      )}
+      {error && <div className="text-red-600 text-sm">{error}</div>}
     </div>
   );
 }

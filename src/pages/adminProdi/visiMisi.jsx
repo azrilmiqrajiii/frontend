@@ -39,6 +39,18 @@ export default function VisiMisi() {
   }, [load]);
 
   const save = async () => {
+    if (!visi.trim()) return alert("Visi wajib diisi");
+    if (!misi.trim()) return alert("Misi wajib diisi");
+
+    if (file) {
+      if (file.type !== "application/pdf") {
+        return alert("File harus PDF");
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        return alert("Ukuran file maksimal 5MB");
+      }
+    }
+
     try {
       setLoading(true);
       const f = new FormData();
@@ -46,8 +58,11 @@ export default function VisiMisi() {
       f.append("misi", misi);
       f.append("tahun", Number(year));
       if (file) f.append("file", file);
+
       await visiMisiAPI.save(user.prodi, f);
       await load();
+    } catch (err) {
+      alert(err.response?.data?.message || "Gagal menyimpan data");
     } finally {
       setLoading(false);
     }
@@ -60,7 +75,9 @@ export default function VisiMisi() {
       setMisi("");
       setData(null);
       setFile(null);
-    } catch {}
+    } catch (err) {
+      alert("error", err);
+    }
   };
 
   return (
