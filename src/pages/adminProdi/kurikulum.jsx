@@ -17,6 +17,9 @@ const emptyRow = {
   rps: "",
 };
 
+const cleanFileName = (url) =>
+  decodeURIComponent(url.split("/").pop()).replace(/^\d+-/, "");
+
 export default function Kurikulum() {
   const { user } = useAuth();
   const [year, setYear] = useState("2026");
@@ -66,7 +69,8 @@ export default function Kurikulum() {
       const r = rows[i];
       if (!r.semester || isNaN(r.semester))
         return `Baris ${i + 1}: Semester harus angka`;
-      if (!r.kode || !r.nama) return `Baris ${i + 1}: Kode & Nama wajib diisi`;
+      if (!r.kode || !r.nama)
+        return `Baris ${i + 1}: Kode & Nama wajib diisi`;
       if (r.sksKuliah === "" || r.sksSeminar === "" || r.sksPraktikum === "")
         return `Baris ${i + 1}: SKS wajib diisi`;
       if (r.rps && !r.rps.match(/\.(xls|xlsx)$/))
@@ -93,19 +97,25 @@ export default function Kurikulum() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-lg font-semibold text-slate-800">Kurikulum</h1>
-          <p className="text-xs text-slate-500">
-            {dirty ? "Belum disimpan" : "Data tersimpan"}
+          <h1 className="text-lg font-semibold text-slate-800">
+            Kurikulum Program Studi
+          </h1>
+          <p
+            className={`text-xs ${
+              dirty ? "text-amber-600" : "text-emerald-600"
+            }`}
+          >
+            {dirty ? "Perubahan belum disimpan" : "Data tersimpan"}
           </p>
         </div>
 
         <select
           value={year}
           onChange={(e) => setYear(e.target.value)}
-          className="border border-slate-300 px-3 py-1.5 text-sm bg-white rounded"
+          className="border border-slate-300 px-3 py-1.5 text-sm bg-white rounded-md shadow-sm"
         >
           {YEARS.map((y) => (
             <option key={y}>{y}</option>
@@ -113,18 +123,32 @@ export default function Kurikulum() {
         </select>
       </div>
 
-      <div className="overflow-auto border border-slate-200 bg-white rounded-md">
+      <div className="overflow-auto rounded-xl border border-slate-200 shadow-sm bg-white">
         <table className="border-collapse text-sm w-full">
-          <thead className="sticky top-0 bg-slate-50 z-10">
-            <tr>
-              <th className="border border-slate-300 w-10">No</th>
-              <th className="border border-slate-300 px-2">Semester</th>
-              <th className="border border-slate-300 px-2">Kode</th>
-              <th className="border border-slate-300 px-2">Nama Mata Kuliah</th>
-              <th className="border border-slate-300 px-2">SKS K</th>
-              <th className="border border-slate-300 px-2">SKS S</th>
-              <th className="border border-slate-300 px-2">SKS P</th>
-              <th className="border border-slate-300 px-2 w-56">RPS</th>
+          <thead className="sticky top-0 bg-slate-100/80 backdrop-blur">
+            <tr className="text-slate-700">
+              <th className="border border-slate-300 w-10 font-medium">No</th>
+              <th className="border border-slate-300 px-2 font-medium">
+                Semester
+              </th>
+              <th className="border border-slate-300 px-2 font-medium">
+                Kode
+              </th>
+              <th className="border border-slate-300 px-2 font-medium">
+                Nama Mata Kuliah
+              </th>
+              <th className="border border-slate-300 px-2 font-medium">
+                SKS K
+              </th>
+              <th className="border border-slate-300 px-2 font-medium">
+                SKS S
+              </th>
+              <th className="border border-slate-300 px-2 font-medium">
+                SKS P
+              </th>
+              <th className="border border-slate-300 px-2 w-56 font-medium">
+                RPS
+              </th>
             </tr>
           </thead>
 
@@ -132,17 +156,17 @@ export default function Kurikulum() {
             {rows.map((r, i) => (
               <tr
                 key={i}
-                className={`border-b border-slate-200 hover:bg-slate-100 ${
-                  i % 2 ? "bg-slate-50/50" : "bg-white"
-                }`}
+                className={`border-b border-slate-200 transition ${
+                  i % 2 ? "bg-slate-50/60" : "bg-white"
+                } hover:bg-blue-50/40`}
               >
-                <td className="border-r border-slate-200 text-center">
+                <td className="border-r border-slate-200 text-center text-slate-500">
                   {i + 1}
                 </td>
 
                 {[
                   ["semester", "w-16 text-center"],
-                  ["kode", "w-24"],
+                  ["kode", "w-24 font-medium"],
                   ["nama", "min-w-[260px]"],
                   ["sksKuliah", "w-14 text-center"],
                   ["sksSeminar", "w-14 text-center"],
@@ -155,7 +179,7 @@ export default function Kurikulum() {
                       }
                       value={r[k]}
                       onChange={(e) => update(i, k, e.target.value)}
-                      className="w-full bg-transparent outline-none focus:bg-blue-50 px-1 py-1"
+                      className="w-full bg-transparent outline-none px-2 py-1 focus:bg-blue-100/60 rounded"
                     />
                   </td>
                 ))}
@@ -163,26 +187,26 @@ export default function Kurikulum() {
                 <td className="px-2 py-1">
                   {dirty ? (
                     <div className="text-xs text-slate-400 italic">
-                      Simpan kurikulum dulu
+                      Simpan dulu
                     </div>
                   ) : r.rps ? (
                     <div className="flex items-center justify-between gap-2">
                       <a
                         href={r.rps}
                         target="_blank"
-                        className="text-xs text-blue-600 underline truncate max-w-40"
+                        className="text-xs font-medium text-blue-700 underline truncate max-w-40"
                       >
-                        {r.rps.split("/").pop()}
+                        {cleanFileName(r.rps)}
                       </a>
                       <button
                         onClick={() => update(i, "rps", "")}
-                        className="text-xs px-2 py-1 border border-red-300 text-red-600 rounded"
+                        className="text-xs px-2 py-1 rounded-md border border-red-300 text-red-600 hover:bg-red-50"
                       >
                         Hapus
                       </button>
                     </div>
                   ) : (
-                    <label className="inline-flex items-center w-full gap-2 text-xs px-3 py-1.5 border border-dashed border-slate-400 rounded cursor-pointer hover:bg-slate-50">
+                    <label className="inline-flex items-center w-full gap-2 text-xs px-3 py-1.5 border border-dashed border-slate-400 rounded-md cursor-pointer hover:bg-slate-100">
                       <Upload size={14} />
                       Upload RPS
                       <input
@@ -197,7 +221,7 @@ export default function Kurikulum() {
                             const res = await kurikulumAPI.uploadRps(
                               user.prodi,
                               i,
-                              f,
+                              f
                             );
                             update(i, "rps", res.data.rps);
                           } catch {
@@ -224,9 +248,9 @@ export default function Kurikulum() {
             <a
               href={pdf}
               target="_blank"
-              className="text-xs text-blue-600 underline block"
+              className="text-xs text-blue-700 underline block font-medium"
             >
-              {pdf.split("/").pop()}
+              {cleanFileName(pdf)}
             </a>
           )}
 
