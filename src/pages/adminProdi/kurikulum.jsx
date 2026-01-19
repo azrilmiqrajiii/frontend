@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import useAuth from "../../context/useAuth";
 import { kurikulumAPI } from "../../api/kurikulum.api";
 import Button from "../../components/Elements/Button";
-import { Upload } from "lucide-react";
+import { Upload, Trash2 } from "lucide-react";
 import FileDrop from "../../components/Fragments/FileDrop";
 
 const YEARS = ["2024", "2025", "2026"];
@@ -69,8 +69,7 @@ export default function Kurikulum() {
       const r = rows[i];
       if (!r.semester || isNaN(r.semester))
         return `Baris ${i + 1}: Semester harus angka`;
-      if (!r.kode || !r.nama)
-        return `Baris ${i + 1}: Kode & Nama wajib diisi`;
+      if (!r.kode || !r.nama) return `Baris ${i + 1}: Kode & Nama wajib diisi`;
       if (r.sksKuliah === "" || r.sksSeminar === "" || r.sksPraktikum === "")
         return `Baris ${i + 1}: SKS wajib diisi`;
       if (r.rps && !r.rps.match(/\.(xls|xlsx)$/))
@@ -89,11 +88,17 @@ export default function Kurikulum() {
       f.append("tahun", Number(year));
       f.append("matkul", JSON.stringify(rows));
       if (pdf instanceof File) f.append("pdf", pdf);
+      if (pdf === "") f.append("removePdf", "1");
       await kurikulumAPI.save(user.prodi, f);
       await load();
     } finally {
       setLoading(false);
     }
+  };
+
+  const removePdf = () => {
+    setPdf("");
+    setDirty(true);
   };
 
   return (
@@ -131,9 +136,7 @@ export default function Kurikulum() {
               <th className="border border-slate-300 px-2 font-medium">
                 Semester
               </th>
-              <th className="border border-slate-300 px-2 font-medium">
-                Kode
-              </th>
+              <th className="border border-slate-300 px-2 font-medium">Kode</th>
               <th className="border border-slate-300 px-2 font-medium">
                 Nama Mata Kuliah
               </th>
@@ -221,7 +224,7 @@ export default function Kurikulum() {
                             const res = await kurikulumAPI.uploadRps(
                               user.prodi,
                               i,
-                              f
+                              f,
                             );
                             update(i, "rps", res.data.rps);
                           } catch {
@@ -239,24 +242,35 @@ export default function Kurikulum() {
       </div>
 
       <div className="flex justify-between items-end">
-        <div className="max-w-sm space-y-1">
+        <div className="max-w-sm space-y-2">
           <p className="text-xs font-medium text-slate-600">
             Lampiran Kurikulum (PDF · Opsional)
           </p>
 
           {typeof pdf === "string" && pdf && (
-            <a
-              href={pdf}
-              target="_blank"
-              className="text-xs text-blue-700 underline block font-medium"
-            >
-              {cleanFileName(pdf)}
-            </a>
+            <div className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+              <a
+                href={pdf}
+                target="_blank"
+                className="text-xs text-blue-700 underline truncate font-medium"
+              >
+                {cleanFileName(pdf)}
+              </a>
+              <button
+                onClick={removePdf}
+                className="p-1.5 rounded-md text-red-600 hover:bg-red-100"
+              >
+                <Trash2 size={14} />
+              </button>
+            </div>
           )}
 
           <FileDrop
             file={pdf instanceof File ? pdf : null}
-            setFile={setPdf}
+            setFile={(f) => {
+              setPdf(f);
+              setDirty(true);
+            }}
             accept="application/pdf"
           />
         </div>

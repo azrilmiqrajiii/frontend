@@ -63,7 +63,7 @@ const Sidebar = ({ open, onClose }) => {
               className={({ isActive }) =>
                 `block px-4 py-2 rounded-lg text-sm font-semibold ${
                   isActive
-                    ? "bg-blue-100 text-blue-700"
+                    ? "bg-blue-100 text-[#1E6F9F]"
                     : "text-slate-700 hover:bg-slate-100"
                 }`
               }
@@ -93,7 +93,7 @@ const Sidebar = ({ open, onClose }) => {
                   className={({ isActive }) =>
                     `block px-3 py-2 rounded text-sm ${
                       isActive
-                        ? "bg-blue-50 text-blue-700"
+                        ? "bg-blue-50 text-[#1E6F9F]"
                         : "text-slate-600 hover:bg-slate-100"
                     }`
                   }

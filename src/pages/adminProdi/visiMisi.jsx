@@ -14,6 +14,7 @@ export default function VisiMisi() {
   const [file, setFile] = useState(null);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -29,6 +30,7 @@ export default function VisiMisi() {
         setMisi("");
       }
       setFile(null);
+      setErrors({});
     } catch {
       setData(null);
     }
@@ -38,19 +40,25 @@ export default function VisiMisi() {
     load();
   }, [load]);
 
-  const save = async () => {
-    if (!visi.trim()) return alert("Visi wajib diisi");
-    if (!misi.trim()) return alert("Misi wajib diisi");
+  const validate = () => {
+    const e = {};
+    if (!visi.trim()) e.visi = "Visi wajib diisi";
+    else if (visi.trim().length < 40) e.visi = "Visi minimal 40 karakter";
+
+    if (!misi.trim()) e.misi = "Misi wajib diisi";
+    else if (misi.trim().length < 80) e.misi = "Misi minimal 80 karakter";
 
     if (file) {
-      if (file.type !== "application/pdf") {
-        return alert("File harus PDF");
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        return alert("Ukuran file maksimal 5MB");
-      }
+      if (file.type !== "application/pdf") e.file = "Dokumen harus PDF";
+      if (file.size > 5 * 1024 * 1024) e.file = "Ukuran maksimal 5MB";
     }
 
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const save = async () => {
+    if (!validate()) return;
     try {
       setLoading(true);
       const f = new FormData();
@@ -58,11 +66,8 @@ export default function VisiMisi() {
       f.append("misi", misi);
       f.append("tahun", Number(year));
       if (file) f.append("file", file);
-
       await visiMisiAPI.save(user.prodi, f);
       await load();
-    } catch (err) {
-      alert(err.response?.data?.message || "Gagal menyimpan data");
     } finally {
       setLoading(false);
     }
@@ -75,25 +80,38 @@ export default function VisiMisi() {
       setMisi("");
       setData(null);
       setFile(null);
+      setErrors({});
     } catch (err) {
       alert("error", err);
     }
   };
 
+  const fieldClass = (err) =>
+    `w-full p-6 rounded-2xl border transition outline-none ${
+      err
+        ? "border-red-400 focus:ring-red-300"
+        : "border-slate-200 focus:ring-[rgba(30,111,159,0.35)]"
+    } focus:ring-2 bg-slate-50 focus:bg-white`;
+
   return (
     <div className="max-w-7xl mx-auto space-y-10">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-bold text-[#0F3D62]">Visi & Misi</h1>
-          <div className="flex items-center gap-3 mt-1">
-            <p className="text-slate-500">Pernyataan resmi program studi</p>
+          <h1 className="text-3xl font-bold text-slate-800">
+            Visi & Misi Program Studi
+          </h1>
+          <p className="text-slate-500 mt-1">
+            Pernyataan strategis dan arah pengembangan prodi
+          </p>
+
+          <div className="mt-3">
             {data ? (
-              <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold">
-                Data sudah tersedia
+              <span className="px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold">
+                ● Data tersedia
               </span>
             ) : (
-              <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-xs font-semibold">
-                Data belum tersedia
+              <span className="px-4 py-1.5 rounded-full bg-slate-100 text-slate-500 text-xs font-semibold">
+                ● Belum tersedia
               </span>
             )}
           </div>
@@ -102,71 +120,95 @@ export default function VisiMisi() {
         <select
           value={year}
           onChange={(e) => setYear(e.target.value)}
-          className="px-6 py-3 rounded-xl bg-white shadow"
+          className="px-5 py-3 rounded-xl bg-white border border-slate-200 shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[rgba(30,111,159,0.35)]"
         >
           {YEARS.map((y) => (
-            <option key={y} value={y}>
-              {y}
-            </option>
+            <option key={y}>{y}</option>
           ))}
         </select>
       </div>
 
-      <div className="bg-white rounded-3xl shadow-xl p-10 space-y-8">
-        <textarea
-          value={visi}
-          onChange={(e) => setVisi(e.target.value)}
-          className="w-full h-40 p-6 rounded-2xl bg-slate-100 focus:outline-none focus:ring-2 focus:ring-[#1E6F9F]"
-          placeholder="Visi Program Studi"
-        />
+      <div className="bg-white rounded-[28px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.12)] p-10 space-y-8">
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-slate-700">Visi</label>
+          <textarea
+            value={visi}
+            onChange={(e) => setVisi(e.target.value)}
+            onBlur={validate}
+            className={`${fieldClass(errors.visi)} h-44`}
+            placeholder="Tuliskan visi program studi"
+          />
+          <p
+            className={`text-xs ${
+              errors.visi ? "text-red-500" : "text-slate-400"
+            }`}
+          >
+            {errors.visi || "Minimal 40 karakter"}
+          </p>
+        </div>
 
-        <textarea
-          value={misi}
-          onChange={(e) => setMisi(e.target.value)}
-          className="w-full h-40 p-6 rounded-2xl bg-slate-100 focus:outline-none focus:ring-2 focus:ring-[#1E6F9F]"
-          placeholder="Misi Program Studi"
-        />
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-slate-700">Misi</label>
+          <textarea
+            value={misi}
+            onChange={(e) => setMisi(e.target.value)}
+            onBlur={validate}
+            className={`${fieldClass(errors.misi)} h-44`}
+            placeholder="Tuliskan misi program studi"
+          />
+          <p
+            className={`text-xs ${
+              errors.misi ? "text-red-500" : "text-slate-400"
+            }`}
+          >
+            {errors.misi || "Minimal 80 karakter"}
+          </p>
+        </div>
 
-        <FileDrop
-          file={file}
-          setFile={setFile}
-          label="Dokumen Pendukung Visi & Misi (PDF)"
-        />
-        {data?.file && (
-          <div className="flex items-center justify-between bg-slate-50 px-6 py-4 rounded-2xl">
-            <div>
-              <p className="text-sm font-semibold text-slate-700">
-                Dokumen Visi & Misi
-              </p>
-              <p className="text-xs text-slate-500">File sudah diunggah</p>
+        <div className="space-y-3">
+          <p className="text-sm font-semibold text-slate-700">
+            Dokumen Pendukung (Opsional)
+          </p>
+
+          <FileDrop file={file} setFile={setFile} />
+
+          {errors.file && <p className="text-xs text-red-500">{errors.file}</p>}
+
+          {data?.file && (
+            <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-6 py-4">
+              <div>
+                <p className="text-sm font-semibold text-slate-700">
+                  Dokumen Visi & Misi
+                </p>
+                <p className="text-xs text-slate-500">File sudah tersimpan</p>
+              </div>
+
+              <a
+                href={data.file}
+                target="_blank"
+                className="px-6 py-2 rounded-xl bg-[#1E6F9F] text-white text-sm font-semibold hover:opacity-90 transition"
+              >
+                Lihat Dokumen
+              </a>
             </div>
+          )}
+        </div>
 
-            <a
-              href={data.file}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition"
-            >
-              Lihat File
-            </a>
-          </div>
-        )}
-
-        <div className="flex gap-4">
+        <div className="flex gap-4 pt-4">
           <Button
             onClick={save}
             loading={loading}
-            className="px-10 py-3 rounded-xl bg-[#1E6F9F] text-white"
+            className="px-10 py-3 rounded-xl bg-[#1E6F9F] text-white hover:opacity-90"
           >
-            Simpan
+            Simpan Perubahan
           </Button>
 
           {data && (
             <Button
               onClick={remove}
-              className="px-8 py-3 rounded-xl bg-red-500 text-white"
+              className="px-8 py-3 rounded-xl bg-red-500 text-white hover:bg-red-600"
             >
-              Hapus
+              Hapus Data
             </Button>
           )}
         </div>
