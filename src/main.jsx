@@ -14,6 +14,8 @@ import VisiMisi from "./pages/adminProdi/visiMisi.jsx";
 import AdminProdiLayouts from "./components/Layouts/AdminProdiLayouts.jsx";
 import Kurikulum from "./pages/adminProdi/kurikulum.jsx";
 import RequireGuest from "./auth/RequireGuest.jsx";
+import KompetensiLulusan from "./pages/adminProdi/kompetensiLulusan.jsx";
+import CapaianPembelajaran from "./pages/adminProdi/kompetensiLulusan/capaianPembelajaran.jsx";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +48,14 @@ const router = createBrowserRouter([
       { index: true, element: <Dashboard /> },
       { path: "visi-misi", element: <VisiMisi /> },
       { path: "kurikulum", element: <Kurikulum /> },
+      {
+        path: "lulusan",
+        element: <KompetensiLulusan />,
+        children: [
+          { index: true, element: <CapaianPembelajaran /> },
+          { path: "capaian-pembelajaran", element: <CapaianPembelajaran /> },
+        ],
+      },
     ],
   },
 
