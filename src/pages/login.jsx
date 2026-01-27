@@ -21,6 +21,6 @@ const LoginPage = () => {
       <FormLogin />
     </AuthLayouts>
   );
-};
+};``
 
 export default LoginPage;

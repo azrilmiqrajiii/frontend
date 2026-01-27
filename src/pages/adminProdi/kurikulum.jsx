@@ -3,7 +3,7 @@ import useAuth from "../../context/useAuth";
 import { kurikulumAPI } from "../../api/kurikulum.api";
 import Button from "../../components/Elements/Button";
 import FileDrop from "../../components/Fragments/FileDrop";
-import { Plus, ArrowUp, ArrowDown, Trash2, Upload } from "lucide-react";
+import { Plus, ArrowUp, ArrowDown, Trash2, Upload, Check } from "lucide-react";
 
 const YEARS = ["2024", "2025", "2026"];
 
@@ -11,14 +11,47 @@ const emptyRow = {
   semester: "",
   kode: "",
   nama: "",
-  sksKuliah: "",
-  sksSeminar: "",
-  sksPraktikum: "",
+  sksKuliah: false,
+  sksSeminar: false,
+  sksPraktikum: false,
   rps: "",
 };
 
 const cleanName = (url) =>
   decodeURIComponent(url.split("/").pop()).replace(/^\d+-/, "");
+
+const SkCheckbox = ({ active, onClick }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={`h-4 w-4 rounded border flex transition ${
+      active
+        ? "bg-blue-600 border-blue-600 text-white"
+        : "border-slate-300 hover:border-blue-600"
+    }`}
+  >
+    {active && <Check size={13} />}
+  </button>
+);
+
+const IconButton = ({ icon: Icon, label, onClick, danger }) => (
+  <div className="relative group flex justify-center">
+    <button
+      type="button"
+      onClick={onClick}
+      className={`h-9 w-9 rounded-lg border flex items-center justify-center transition ${
+        danger
+          ? "border-red-300 text-red-500 hover:bg-red-50"
+          : "border-slate-300 text-slate-600 hover:bg-blue-50 hover:text-blue-600"
+      }`}
+    >
+      <Icon size={18} icon={Icon} />
+    </button>
+    <div className="pointer-events-none absolute ml-2 right-full top-1/2 -translate-y-12 whitespace-nowrap rounded-md bg-slate-800 px-3 py-1.5 text-xs text-white opacity-0 group-hover:opacity-100 transition">
+      {label}
+    </div>
+  </div>
+);
 
 export default function Kurikulum() {
   const { user } = useAuth();
@@ -36,7 +69,6 @@ export default function Kurikulum() {
       const res = await kurikulumAPI.get(user.prodi, year);
       setRows(res.data?.matkul || []);
       setPdf(res.data?.pdf || null);
-      setRemovePdf(false);
       setDirty(false);
       setActive(0);
     } catch {
@@ -56,8 +88,21 @@ export default function Kurikulum() {
     setDirty(true);
   };
 
+  const setSks = (i, type) => {
+    const d = [...rows];
+    d[i] = {
+      ...d[i],
+      sksKuliah: false,
+      sksSeminar: false,
+      sksPraktikum: false,
+      [type]: true,
+    };
+    setRows(d);
+    setDirty(true);
+  };
+
   const addRow = () => {
-    setRows([...rows, { ...emptyRow }]);
+    setRows((prev) => [...prev, { ...emptyRow }]);
     setActive(rows.length);
     setDirty(true);
   };
@@ -73,6 +118,7 @@ export default function Kurikulum() {
     const d = [...rows];
     d.splice(active + 1, 0, { ...emptyRow });
     setRows(d);
+    setActive(active + 1);
     setDirty(true);
   };
 
@@ -104,10 +150,19 @@ export default function Kurikulum() {
     }
   };
 
+  const validate = () => {
+    for (const r of rows) {
+      if (!r.nama) throw new Error("Nama mata kuliah wajib diisi");
+      if (!r.sksKuliah && !r.sksSeminar && !r.sksPraktikum)
+        throw new Error(`SKS wajib dipilih pada ${r.nama}`);
+    }
+  };
+
   const save = async () => {
     try {
       setLoading(true);
       setError("");
+      validate();
       const f = new FormData();
       f.append("tahun", year);
       f.append("matkul", JSON.stringify(rows));
@@ -115,8 +170,8 @@ export default function Kurikulum() {
       if (removePdf) f.append("removePdf", "1");
       await kurikulumAPI.save(user.prodi, f);
       await load();
-    } catch {
-      setError("Gagal menyimpan kurikulum");
+    } catch (e) {
+      setError(e.message || "Gagal menyimpan");
     } finally {
       setLoading(false);
     }
@@ -126,13 +181,9 @@ export default function Kurikulum() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-lg font-semibold text-slate-800">
-            Kurikulum Program Studi
-          </h1>
+          <h1 className="text-lg font-semibold">Kurikulum Program Studi</h1>
           <p
-            className={`text-xs ${
-              dirty ? "text-amber-600" : "text-emerald-600"
-            }`}
+            className={`text-xs ${dirty ? "text-amber-600" : "text-emerald-600"}`}
           >
             {dirty ? "Belum disimpan" : "Tersimpan"}
           </p>
@@ -141,7 +192,7 @@ export default function Kurikulum() {
         <select
           value={year}
           onChange={(e) => setYear(e.target.value)}
-          className="px-3 py-1.5 rounded-md border border-slate-300 bg-white text-sm"
+          className="px-3 py-2 rounded-lg border-2 border-slate-300"
         >
           {YEARS.map((y) => (
             <option key={y}>{y}</option>
@@ -149,58 +200,39 @@ export default function Kurikulum() {
         </select>
       </div>
 
-      <div className="relative flex gap-4">
-        <div className="flex-1 overflow-auto rounded-xl border border-slate-300">
-          <table className="min-w-250 w-full border-collapse text-sm">
-            <thead className="sticky top-0 bg-slate-100 border-b border-slate-300 z-10 text-center">
-              <tr className="text-slate-700 text-xs">
-                <th
-                  rowSpan={2}
-                  className="px-3 py-2 border border-slate-300 font-semibold"
-                >
+      <div className="flex gap-4">
+        <div className="flex-1 overflow-auto rounded-2xl bg-white shadow-lg">
+          <table className="min-w-300 w-full border-collapse text-sm">
+            <thead>
+              <tr className="bg-slate-700 text-white">
+                <th rowSpan={2} className="border-2 px-3 py-3 text-center">
                   No
                 </th>
-                <th
-                  rowSpan={2}
-                  className="px-3 py-2 border border-slate-300 font-semibold"
-                >
+                <th rowSpan={2} className="border-2 px-3 py-3 text-center">
                   Semester
                 </th>
-                <th
-                  rowSpan={2}
-                  className="px-3 py-2 border border-slate-300 font-semibold"
-                >
+                <th rowSpan={2} className="border-2 px-3 py-3 text-center">
                   Kode
                 </th>
-                <th
-                  rowSpan={2}
-                  className="px-3 py-2 border border-slate-300 font-semibold"
-                >
+                <th rowSpan={2} className="border-2 px-4 py-3 text-center">
                   Nama Mata Kuliah
                 </th>
-                <th
-                  colSpan={3}
-                  className="px-3 py-2 border border-slate-300 font-semibold bg-slate-200"
-                >
+                <th colSpan={3} className="border-2 px-4 py-3 text-center">
                   Bobot Kredit (SKS)
                 </th>
-                <th
-                  rowSpan={2}
-                  className="px-3 py-2 border border-slate-300 font-semibold"
-                >
+                <th rowSpan={2} className="border-2 px-4 py-3 text-center">
                   RPS
                 </th>
               </tr>
-
-              <tr className="text-slate-600 text-xs">
-                <th className="px-3 py-2 border border-slate-300 font-medium">
-                  Kuliah / Proposal / Tutorial
+              <tr className="bg-slate-700 text-white">
+                <th className="border-2 border-white px-3 py-2 text-center">
+                  Kuliah
                 </th>
-                <th className="px-3 py-2 border border-slate-300 font-medium">
+                <th className="border-2 border-white px-3 py-2 text-center">
                   Seminar
                 </th>
-                <th className="px-3 py-2 border border-slate-300 font-medium">
-                  Praktikum / Praktik Lapangan
+                <th className="border-2 border-white px-3 py-2 text-center">
+                  Praktikum
                 </th>
               </tr>
             </thead>
@@ -210,67 +242,86 @@ export default function Kurikulum() {
                 <tr
                   key={r._id || i}
                   onClick={() => setActive(i)}
-                  className={`${
-                    active === i ? "bg-[#1E6F9F]/10" : "hover:bg-slate-50"
-                  }`}
+                  className={active === i ? "bg-blue-50" : "hover:bg-slate-50"} 
                 >
-                  <td className="px-3 py-2 border border-slate-300 text-slate-500">
+                  <td className="border-2 border-white px-3 py-2 text-center">
                     {i + 1}
                   </td>
-
-                  {["semester", "kode", "nama"].map((k) => (
-                    <td key={k} className="px-3 py-2 border border-slate-300">
-                      <input
-                        value={r[k] || ""}
-                        onChange={(e) => update(i, k, e.target.value)}
-                        className="w-full bg-transparent outline-none"
-                      />
-                    </td>
-                  ))}
-
-                  {["sksKuliah", "sksSeminar", "sksPraktikum"].map((k) => (
-                    <td
-                      key={k}
-                      className="px-3 py-2 border border-slate-300 text-center"
-                    >
-                      <input
-                        value={r[k] || ""}
-                        onChange={(e) => update(i, k, e.target.value)}
-                        className="w-10 bg-transparent outline-none text-center"
-                      />
-                    </td>
-                  ))}
-
-                  <td className="px-3 py-2 border border-slate-300">
-                    {r.rps ? (
-                      <div className="flex items-center gap-2 max-w-45">
-                        <a
-                          href={r.rps}
-                          target="_blank"
-                          className="text-xs text-[#1E6F9F] underline truncate"
-                        >
-                          {cleanName(r.rps)}
-                        </a>
-                        <button
-                          onClick={() => removeRps(r)}
-                          className="p-1 rounded hover:bg-red-100 text-red-500"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
+                  <td className="border-2 border-white px-3 py-2 text-center">
+                    <input
+                      value={r.semester}
+                      onChange={(e) => update(i, "semester", e.target.value)}
+                      className="w-full rounded-md  outline-0 px-2 py-1 text-center"
+                    />
+                  </td>
+                  <td className="border-2 border-white px-3 py-2 text-center">
+                    <input
+                      value={r.kode}
+                      onChange={(e) => update(i, "kode", e.target.value)}
+                      className="w-full rounded-md outline-0 px-2 py-1 text-center"
+                    />
+                  </td>
+                  <td className="border-2 border-white px-4 py-2">
+                    <input
+                      value={r.nama}
+                      onChange={(e) => update(i, "nama", e.target.value)}
+                      className="w-full rounded-md outline-0 px-3 py-1.5"
+                    />
+                  </td>
+                  <td className="border-2 border-white px-3 py-2 text-center ">
+                    <SkCheckbox
+                      active={r.sksKuliah}
+                      onClick={() => setSks(i, "sksKuliah")}
+                    />
+                  </td>
+                  <td className="border-2 border-white px-3 py-2 text-center">
+                    <SkCheckbox
+                      active={r.sksSeminar}
+                      onClick={() => setSks(i, "sksSeminar")}
+                    />
+                  </td>
+                  <td className="border-2 border-white px-3 py-2 text-center">
+                    <SkCheckbox
+                      active={r.sksPraktikum}
+                      onClick={() => setSks(i, "sksPraktikum")}
+                    />
+                  </td>
+                  <td className="border-2 border-white px-4 py-2 text-center">
+                    {r._id ? (
+                      r.rps ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <a
+                            href={r.rps}
+                            target="_blank"
+                            className="text-xs text-cyan-500 underline truncate max-w-35"
+                          >
+                            {cleanName(r.rps)}
+                          </a>
+                          <button
+                            onClick={() => removeRps(r)}
+                            className="text-red-500"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      ) : (
+                        <label className="inline-flex items-center gap-1 text-xs cursor-pointer">
+                          <Upload size={14} />
+                          Upload
+                          <input
+                            type="file"
+                            accept=".xls,.xlsx"
+                            hidden
+                            onChange={(e) =>
+                              e.target.files && uploadRps(r, e.target.files[0])
+                            }
+                          />
+                        </label>
+                      )
                     ) : (
-                      <label className="flex items-center gap-2 text-xs cursor-pointer text-slate-500 hover:text-[#1E6F9F]">
-                        <Upload size={14} />
-                        Upload
-                        <input
-                          type="file"
-                          accept=".xls,.xlsx"
-                          hidden
-                          onChange={(e) =>
-                            e.target.files && uploadRps(r, e.target.files[0])
-                          }
-                        />
-                      </label>
+                      <span className="text-xs text-slate-400">
+                        Simpan dulu
+                      </span>
                     )}
                   </td>
                 </tr>
@@ -279,31 +330,24 @@ export default function Kurikulum() {
           </table>
         </div>
 
-        <div className="flex flex-col gap-3 pt-10">
-          {[
-            { icon: Plus, label: "Tambah baris", action: addRow },
-            { icon: ArrowUp, label: "Sisip di atas", action: insertAbove },
-            { icon: ArrowDown, label: "Sisip di bawah", action: insertBelow },
-            { icon: Trash2, label: "Hapus baris", action: removeRow },
-          ].map(({ icon: Icon, label, action }) => (
-            <div key={label} className="relative group">
-              <button
-                onClick={action}
-                className="h-9 w-9 rounded-full flex items-center justify-center
-                border border-slate-300 bg-white
-                hover:bg-[#1E6F9F]/10 hover:border-[#1E6F9F]"
-              >
-                <Icon size={16} />
-              </button>
-              <div
-                className="pointer-events-none absolute bottom-full mb-2 left-1/2 -translate-x-1/2
-  px-2 py-1 text-xs rounded bg-slate-800 text-white
-  opacity-0 group-hover:opacity-100 transition"
-              >
-                {label}
-              </div>
-            </div>
-          ))}
+        <div className="flex flex-col gap-2 pt-14 shrink-0">
+          <IconButton icon={Plus} label="Tambah baris" onClick={addRow} />
+          <IconButton
+            icon={ArrowUp}
+            label="Sisipkan di atas"
+            onClick={insertAbove}
+          />
+          <IconButton
+            icon={ArrowDown}
+            label="Sisipkan di bawah"
+            onClick={insertBelow}
+          />
+          <IconButton
+            icon={Trash2}
+            label="Hapus baris"
+            danger
+            onClick={removeRow}
+          />
         </div>
       </div>
 
@@ -322,7 +366,6 @@ export default function Kurikulum() {
             setDirty(true);
           }}
         />
-
         <Button onClick={save} loading={loading}>
           Simpan
         </Button>

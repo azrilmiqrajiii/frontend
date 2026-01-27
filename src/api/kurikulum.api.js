@@ -8,8 +8,11 @@ export const kurikulumAPI = {
       headers: { "Content-Type": "multipart/form-data" },
     }),
 
-  uploadRps: (prodi, index, form) =>
-    axios.post(`/kurikulum/${prodi}/rps/${index}`, form, {
+  uploadRps: (prodi, matkulId, form) =>
+    axios.post(`/kurikulum/${prodi}/rps/${matkulId}`, form, {
       headers: { "Content-Type": "multipart/form-data" },
     }),
+
+  removeRps: (prodi, matkulId, tahun) =>
+    axios.delete(`/kurikulum/${prodi}/rps/${matkulId}/${tahun}`),
 };

@@ -16,6 +16,7 @@ import Kurikulum from "./pages/adminProdi/kurikulum.jsx";
 import RequireGuest from "./auth/RequireGuest.jsx";
 import KompetensiLulusan from "./pages/adminProdi/kompetensiLulusan.jsx";
 import CapaianPembelajaran from "./pages/adminProdi/kompetensiLulusan/capaianPembelajaran.jsx";
+import PrestasiMahasiswa from "./pages/adminProdi/kompetensiLulusan/prestasiMahasiswa.jsx";
 
 const router = createBrowserRouter([
   {
@@ -54,6 +55,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <CapaianPembelajaran /> },
           { path: "capaian-pembelajaran", element: <CapaianPembelajaran /> },
+          { path: "prestasi-mahasiswa", element: <PrestasiMahasiswa /> },
         ],
       },
     ],
