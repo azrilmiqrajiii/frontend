@@ -1,6 +1,6 @@
 export const MENU_YEARS = {
   "Visi dan Misi": 2020,
-  "Kurikulum": 2016,
+  Kurikulum: 2016,
   "Pendidik dan Tenaga Kependidikan": 2016,
   "Sarana dan Prasarana": 2016,
   "Mahasiswa dan Lulusan": 2020,

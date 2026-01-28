@@ -17,6 +17,7 @@ import RequireGuest from "./auth/RequireGuest.jsx";
 import KompetensiLulusan from "./pages/adminProdi/kompetensiLulusan.jsx";
 import CapaianPembelajaran from "./pages/adminProdi/kompetensiLulusan/capaianPembelajaran.jsx";
 import PrestasiMahasiswa from "./pages/adminProdi/kompetensiLulusan/prestasiMahasiswa.jsx";
+import WaktuTungguLulusan from "./pages/adminProdi/kompetensiLulusan/waktuTungguLulusan.jsx";
 
 const router = createBrowserRouter([
   {
@@ -56,6 +57,7 @@ const router = createBrowserRouter([
           { index: true, element: <CapaianPembelajaran /> },
           { path: "capaian-pembelajaran", element: <CapaianPembelajaran /> },
           { path: "prestasi-mahasiswa", element: <PrestasiMahasiswa /> },
+          { path: "waktu-tunggu", element: <WaktuTungguLulusan /> },
         ],
       },
     ],

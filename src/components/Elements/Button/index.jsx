@@ -4,7 +4,7 @@ const Button = ({
   onClick,
   disabled = false,
   loading = false,
-  className = "",
+  className = "  bg-[#1E6F9F]  hover:bg-[#0F3D62]",
 }) => {
   return (
     <button
