@@ -5,6 +5,7 @@ import Button from "../../components/Elements/Button";
 import FileDrop from "../../components/Fragments/FileDrop";
 
 const YEARS = ["2020", "2021", "2022", "2023", "2024", "2025", "2026"];
+const PRIMARY = "#1E6F9F";
 
 export default function VisiMisi() {
   const { user } = useAuth();
@@ -74,43 +75,38 @@ export default function VisiMisi() {
   };
 
   const remove = async () => {
-    try {
-      await visiMisiAPI.remove(data._id);
-      setVisi("");
-      setMisi("");
-      setData(null);
-      setFile(null);
-      setErrors({});
-    } catch (err) {
-      alert("error", err);
-    }
+    await visiMisiAPI.remove(data._id);
+    setVisi("");
+    setMisi("");
+    setData(null);
+    setFile(null);
+    setErrors({});
   };
 
-  const fieldClass = (err) =>
-    `w-full p-6 rounded-2xl border transition outline-none ${
-      err
-        ? "border-red-400 focus:ring-red-300"
-        : "border-slate-200 focus:ring-[rgba(30,111,159,0.35)]"
-    } focus:ring-2 bg-slate-50 focus:bg-white`;
+  const field = (err) =>
+    `w-full rounded-[28px] px-8 py-6 bg-white/85 backdrop-blur outline-none transition
+     focus:ring-2 focus:ring-[rgba(30,111,159,0.35)]
+     ${err ? "ring-2 ring-red-400" : ""}`;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-10">
+    <div className="max-w-7xl mx-auto space-y-14">
+      {/* HEADER */}
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">
+          <h1 className="text-3xl font-semibold text-slate-800">
             Visi & Misi Program Studi
           </h1>
           <p className="text-slate-500 mt-1">
-            Pernyataan strategis dan arah pengembangan prodi
+            Pernyataan strategis dan arah pengembangan program studi
           </p>
 
-          <div className="mt-3">
+          <div className="mt-4">
             {data ? (
-              <span className="px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold">
+              <span className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700">
                 ● Data tersedia
               </span>
             ) : (
-              <span className="px-4 py-1.5 rounded-full bg-slate-100 text-slate-500 text-xs font-semibold">
+              <span className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500">
                 ● Belum tersedia
               </span>
             )}
@@ -120,7 +116,7 @@ export default function VisiMisi() {
         <select
           value={year}
           onChange={(e) => setYear(e.target.value)}
-          className="px-5 py-3 rounded-xl bg-white border border-slate-200 shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[rgba(30,111,159,0.35)]"
+          className="px-6 py-3 rounded-2xl bg-white/80 backdrop-blur shadow-md text-sm font-medium outline-none focus:ring-2 focus:ring-[rgba(30,111,159,0.35)]"
         >
           {YEARS.map((y) => (
             <option key={y}>{y}</option>
@@ -128,77 +124,85 @@ export default function VisiMisi() {
         </select>
       </div>
 
-      <div className="bg-white rounded-[28px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.12)] p-10 space-y-8">
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-slate-700">Visi</label>
+      {/* MAIN CARD */}
+      <div className="bg-white/85 backdrop-blur rounded-[36px] shadow-[0_24px_90px_rgba(0,0,0,0.12)] p-12 space-y-12">
+        {/* VISI */}
+        <section className="space-y-3 ">
+          <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+            Visi
+          </h2>
           <textarea
             value={visi}
             onChange={(e) => setVisi(e.target.value)}
             onBlur={validate}
-            className={`${fieldClass(errors.visi)} h-44`}
-            placeholder="Tuliskan visi program studi"
+            className={`${field(errors.visi)} h-48 border-4 border-slate-200 `}
+            placeholder="Tuliskan visi program studi sebagai arah jangka panjang"
           />
           <p
-            className={`text-xs ${
-              errors.visi ? "text-red-500" : "text-slate-400"
-            }`}
+            className={`text-xs ${errors.visi ? "text-red-500" : "text-slate-400"}`}
           >
             {errors.visi || "Minimal 40 karakter"}
           </p>
-        </div>
+        </section>
 
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-slate-700">Misi</label>
+        {/* MISI */}
+        <section className="space-y-3">
+          <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+            Misi
+          </h2>
           <textarea
             value={misi}
             onChange={(e) => setMisi(e.target.value)}
             onBlur={validate}
-            className={`${fieldClass(errors.misi)} h-44`}
-            placeholder="Tuliskan misi program studi"
+            className={`${field(errors.misi)} h-52 border-4 border-slate-200 `}
+            placeholder="Tuliskan misi sebagai langkah strategis untuk mencapai visi"
           />
           <p
-            className={`text-xs ${
-              errors.misi ? "text-red-500" : "text-slate-400"
-            }`}
+            className={`text-xs ${errors.misi ? "text-red-500" : "text-slate-400 "}`}
           >
             {errors.misi || "Minimal 80 karakter"}
           </p>
-        </div>
+        </section>
 
-        <div className="space-y-3">
-          <p className="text-sm font-semibold text-slate-700">
-            Dokumen Pendukung (Opsional)
-          </p>
+        {/* FILE */}
+        <section className="space-y-4">
+          <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+            Dokumen Pendukung
+          </h2>
 
           <FileDrop file={file} setFile={setFile} />
 
           {errors.file && <p className="text-xs text-red-500">{errors.file}</p>}
 
           {data?.file && (
-            <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-6 py-4">
+            <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-8 py-5">
               <div>
                 <p className="text-sm font-semibold text-slate-700">
                   Dokumen Visi & Misi
                 </p>
-                <p className="text-xs text-slate-500">File sudah tersimpan</p>
+                <p className="text-xs text-slate-500">File telah tersimpan</p>
               </div>
 
               <a
                 href={data.file}
                 target="_blank"
-                className="px-6 py-2 rounded-xl bg-[#1E6F9F] text-white text-sm font-semibold hover:opacity-90 transition"
+                rel="noreferrer"
+                className="px-6 py-3 rounded-2xl text-sm font-semibold text-white"
+                style={{ backgroundColor: PRIMARY }}
               >
                 Lihat Dokumen
               </a>
             </div>
           )}
-        </div>
+        </section>
 
-        <div className="flex gap-4 pt-4">
+        {/* ACTION */}
+        <div className="flex gap-5 pt-6">
           <Button
             onClick={save}
             loading={loading}
-            className="px-10 py-3 rounded-xl bg-[#1E6F9F] text-white hover:opacity-90"
+            className="px-12 py-4 rounded-2xl text-white"
+            style={{ backgroundColor: PRIMARY }}
           >
             Simpan Perubahan
           </Button>
@@ -206,7 +210,7 @@ export default function VisiMisi() {
           {data && (
             <Button
               onClick={remove}
-              className="px-8 py-3 rounded-xl bg-red-500 text-white hover:bg-red-600"
+              className="px-10 py-4 rounded-2xl bg-red-500 text-white hover:bg-red-600"
             >
               Hapus Data
             </Button>

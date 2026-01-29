@@ -26,8 +26,8 @@ const SkCheckbox = ({ active, onClick }) => (
     onClick={onClick}
     className={`h-4 w-4 rounded border flex transition ${
       active
-        ? "bg-blue-600 border-blue-600 text-white"
-        : "border-slate-300 hover:border-blue-600"
+        ? "bg-[#1E6F9F] border-[#1E6F9F] text-white"
+        : "border-slate-300 hover:border-[#1E6F9F]"
     }`}
   >
     {active && <Check size={13} />}
@@ -42,7 +42,7 @@ const IconButton = ({ icon: Icon, label, onClick, danger }) => (
       className={`h-9 w-9 rounded-lg border flex items-center justify-center transition ${
         danger
           ? "border-red-300 text-red-500 hover:bg-red-50"
-          : "border-slate-300 text-slate-600 hover:bg-blue-50 hover:text-blue-600"
+          : "border-slate-300 text-slate-600 hover:bg-blue-[#1E6F9F]/10 hover:text-[#1E6F9F]"
       }`}
     >
       <Icon size={18} icon={Icon} />
@@ -201,10 +201,10 @@ export default function Kurikulum() {
       </div>
 
       <div className="flex gap-4">
-        <div className="flex-1 overflow-auto rounded-2xl bg-white shadow-lg">
-          <table className="min-w-300 w-full border-collapse text-sm">
+        <div className="flex-1 overflow-auto rounded-[32px] bg-white shadow-[0_28px_110px_rgba(0,0,0,0.14)]">
+          <table className="min-w-300 w-full border-collapse text-sm border border-slate-300/70">
             <thead>
-              <tr className="bg-slate-700 text-white">
+              <tr className="bg-[#1E6F9F] text-white shadow-inner">
                 <th rowSpan={2} className="border-2 px-3 py-3 text-center">
                   No
                 </th>
@@ -224,14 +224,23 @@ export default function Kurikulum() {
                   RPS
                 </th>
               </tr>
-              <tr className="bg-slate-700 text-white">
-                <th className="border-2 border-white px-3 py-2 text-center">
+              <tr className="bg-slate-600 text-white">
+                <th
+                  className="border border-slate-200
+ px-3 py-2 text-center"
+                >
                   Kuliah
                 </th>
-                <th className="border-2 border-white px-3 py-2 text-center">
+                <th
+                  className="border border-slate-200
+ px-3 py-2 text-center"
+                >
                   Seminar
                 </th>
-                <th className="border-2 border-white px-3 py-2 text-center">
+                <th
+                  className="border border-slate-200
+ px-3 py-2 text-center"
+                >
                   Praktikum
                 </th>
               </tr>
@@ -242,51 +251,77 @@ export default function Kurikulum() {
                 <tr
                   key={r._id || i}
                   onClick={() => setActive(i)}
-                  className={active === i ? "bg-blue-50" : "hover:bg-slate-50"} 
+                  className={`transition ${
+                    active === i ? "bg-[#1E6F9F]/15" : "hover:bg-slate-50/80"
+                  }`}
                 >
-                  <td className="border-2 border-white px-3 py-2 text-center">
+                  <td
+                    className="border border-slate-300/70
+ px-3 py-2 text-center"
+                  >
                     {i + 1}
                   </td>
-                  <td className="border-2 border-white px-3 py-2 text-center">
+                  <td
+                    className="border border-slate-300/70
+ px-3 py-2 text-center"
+                  >
                     <input
                       value={r.semester}
                       onChange={(e) => update(i, "semester", e.target.value)}
                       className="w-full rounded-md  outline-0 px-2 py-1 text-center"
                     />
                   </td>
-                  <td className="border-2 border-white px-3 py-2 text-center">
+                  <td
+                    className="border border-slate-300/70
+ px-3 py-2 text-center"
+                  >
                     <input
                       value={r.kode}
                       onChange={(e) => update(i, "kode", e.target.value)}
-                      className="w-full rounded-md outline-0 px-2 py-1 text-center"
+                      className="w-full bg-transparent outline-none px-2 py-1 text-center focus:bg-white/70 transition"
                     />
                   </td>
-                  <td className="border-2 border-white px-4 py-2">
+                  <td
+                    className="border border-slate-300/70
+ px-4 py-2"
+                  >
                     <input
                       value={r.nama}
                       onChange={(e) => update(i, "nama", e.target.value)}
                       className="w-full rounded-md outline-0 px-3 py-1.5"
                     />
                   </td>
-                  <td className="border-2 border-white px-3 py-2 text-center ">
+                  <td
+                    className="border border-slate-300/70
+ px-3 py-2 text-center "
+                  >
                     <SkCheckbox
                       active={r.sksKuliah}
                       onClick={() => setSks(i, "sksKuliah")}
                     />
                   </td>
-                  <td className="border-2 border-white px-3 py-2 text-center">
+                  <td
+                    className="border border-slate-300/70
+ px-3 py-2 text-center"
+                  >
                     <SkCheckbox
                       active={r.sksSeminar}
                       onClick={() => setSks(i, "sksSeminar")}
                     />
                   </td>
-                  <td className="border-2 border-white px-3 py-2 text-center">
+                  <td
+                    className="border border-slate-300/70
+ px-3 py-2 text-center"
+                  >
                     <SkCheckbox
                       active={r.sksPraktikum}
                       onClick={() => setSks(i, "sksPraktikum")}
                     />
                   </td>
-                  <td className="border-2 border-white px-4 py-2 text-center">
+                  <td
+                    className="border border-slate-300/70
+ px-4 py-2 text-center"
+                  >
                     {r._id ? (
                       r.rps ? (
                         <div className="flex items-center justify-center gap-2">

@@ -5,6 +5,8 @@ import FileDrop from "../../../components/Fragments/FileDrop";
 import useAuth from "../../../context/useAuth";
 import { waktuTungguLulusanAPI } from "../../../api/waktuTungguLulusan.api";
 
+const PRIMARY = "#1E6F9F";
+
 const emptyRow = {
   bulanWisuda: "",
   jumlahLulusan: "",
@@ -29,7 +31,6 @@ const WaktuTungguLulusan = () => {
     const loadData = async () => {
       try {
         const res = await waktuTungguLulusanAPI.get(user.prodi, tahun);
-
         if (res.data) {
           setRows(res.data.rows?.length ? res.data.rows : [{ ...emptyRow }]);
           setFile(res.data.file || null);
@@ -42,7 +43,6 @@ const WaktuTungguLulusan = () => {
         setFile(null);
       }
     };
-
     if (user && tahun) loadData();
   }, [user, tahun]);
 
@@ -69,7 +69,6 @@ const WaktuTungguLulusan = () => {
         return `Baris ${i + 1}: Terlacak melebihi jumlah lulusan`;
       if (wt > terlacak) return `Baris ${i + 1}: Total WT melebihi terlacak`;
     }
-
     if (!file) return "File tracer study wajib diunggah";
     return null;
   };
@@ -89,9 +88,9 @@ const WaktuTungguLulusan = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* HEADER */}
-      <div className="flex flex-col gap-1 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-slate-800">
             Waktu Tunggu Lulusan
@@ -104,7 +103,9 @@ const WaktuTungguLulusan = () => {
         <select
           value={tahun}
           onChange={(e) => setTahun(Number(e.target.value))}
-          className="px-5 py-3 rounded-xl bg-white border border-slate-200 shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[rgba(30,111,159,0.35)]"
+          className="px-5 py-3 rounded-full bg-white border border-slate-300
+          shadow-sm text-sm font-medium focus:outline-none
+          focus:ring-2 focus:ring-[rgba(30,111,159,0.35)]"
         >
           {years.map((y) => (
             <option key={y} value={y}>
@@ -116,13 +117,15 @@ const WaktuTungguLulusan = () => {
 
       {/* ERROR */}
       {error && (
-        <div className="bg-red-50 px-4 py-2 text-sm text-red-700">{error}</div>
+        <div className="bg-red-50 border border-red-200 px-4 py-2 text-sm text-red-700 rounded-lg">
+          {error}
+        </div>
       )}
 
       {/* TABLE */}
-      <div className="bg-white overflow-x-auto">
-        <table className="min-w-[1100px] w-full text-sm border border-slate-300">
-          <thead className="bg-slate-100">
+      <div className="overflow-x-auto bg-white border border-slate-300 rounded-xl">
+        <table className="min-w-[1100px] w-full text-sm border-collapse">
+          <thead className="bg-[#1E6F9F] text-white">
             <tr>
               <th
                 rowSpan={2}
@@ -176,12 +179,15 @@ const WaktuTungguLulusan = () => {
 
           <tbody>
             {rows.map((r, i) => (
-              <tr key={i} className="hover:bg-slate-50">
+              <tr
+                key={i}
+                className="odd:bg-white even:bg-slate-50 hover:bg-slate-100 transition"
+              >
                 <td className="border border-slate-300 px-3 py-2">
                   <input
                     value={r.bulanWisuda}
                     onChange={(e) => update(i, "bulanWisuda", e.target.value)}
-                    className="w-full bg-transparent outline-none"
+                    className="w-full bg-transparent outline-none px-2 py-1 focus:bg-white/70 transition"
                   />
                 </td>
 
@@ -201,7 +207,7 @@ const WaktuTungguLulusan = () => {
                       type="number"
                       value={r[k]}
                       onChange={(e) => update(i, k, e.target.value)}
-                      className="w-full bg-transparent text-center outline-none"
+                      className="w-full bg-transparent text-center outline-none px-2 py-1 focus:bg-white/70 transition"
                     />
                   </td>
                 ))}
@@ -209,9 +215,11 @@ const WaktuTungguLulusan = () => {
                 <td className="border border-slate-300 px-2 py-2 text-center">
                   <button
                     onClick={() => removeRow(i)}
-                    className="text-red-600 hover:text-red-700"
+                    className="inline-flex items-center justify-center
+                    h-8 w-8 rounded-full text-red-600
+                    hover:bg-red-100 transition"
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={14} />
                   </button>
                 </td>
               </tr>
@@ -222,15 +230,15 @@ const WaktuTungguLulusan = () => {
 
       {/* ADD ROW */}
       <Button
-        onClick={() => setRows([...rows, { ...emptyRow }])}
-        className="flex items-center gap-2"
+        className="inline-flex items-center gap-2 px-6 py-3 rounded-full
+          text-white shadow-md transition"
       >
         <Plus size={16} /> Tambah Baris
       </Button>
 
       {/* FILE */}
-      <div className="bg-white border border-slate-300 p-4 space-y-2">
-        <p className="text-sm font-semibold">
+      <div className="bg-white border border-slate-300 rounded-xl p-4 space-y-2">
+        <p className="text-sm font-semibold text-slate-700">
           Bukti Laporan Tracer Study (PDF)
         </p>
 
@@ -241,7 +249,8 @@ const WaktuTungguLulusan = () => {
             href={file}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1 text-sm text-blue-600 ml-2"
+            className="inline-flex items-center gap-1 text-sm
+            text-[#1E6F9F] underline underline-offset-2 hover:opacity-80"
             title={file.split("/").pop()}
           >
             <Eye size={16} /> Lihat File
@@ -250,8 +259,13 @@ const WaktuTungguLulusan = () => {
       </div>
 
       {/* SAVE */}
-      <div className="flex ">
-        <Button onClick={handleSave} className="flex items-center gap-2 px-6">
+      <div className="flex">
+        <Button
+          onClick={handleSave}
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-full
+          text-white shadow-md transition"
+          style={{ backgroundColor: PRIMARY }}
+        >
           <Save size={16} /> Simpan Data
         </Button>
       </div>
