@@ -124,7 +124,7 @@ const WaktuTungguLulusan = () => {
 
       {/* TABLE */}
       <div className="overflow-x-auto bg-white border border-slate-300 rounded-xl">
-        <table className="min-w-[1100px] w-full text-sm border-collapse">
+        <table className="min-w-275 w-full text-sm border-collapse">
           <thead className="bg-[#1E6F9F] text-white">
             <tr>
               <th
@@ -230,8 +230,11 @@ const WaktuTungguLulusan = () => {
 
       {/* ADD ROW */}
       <Button
+        onClick={() => setRows([...rows, { ...emptyRow }])}
         className="inline-flex items-center gap-2 px-6 py-3 rounded-full
-          text-white shadow-md transition"
+  bg-blue text-slate-300
+  hover:bg-[#1E6F9F]/20
+  transition"
       >
         <Plus size={16} /> Tambah Baris
       </Button>
