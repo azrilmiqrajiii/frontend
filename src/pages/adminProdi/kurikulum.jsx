@@ -192,7 +192,7 @@ export default function Kurikulum() {
         <select
           value={year}
           onChange={(e) => setYear(e.target.value)}
-          className="px-3 py-2 rounded-lg border-2 border-slate-300"
+          className="px-3 py-2 rounded-lg shadow bg-white"
         >
           {YEARS.map((y) => (
             <option key={y}>{y}</option>
@@ -200,49 +200,52 @@ export default function Kurikulum() {
         </select>
       </div>
 
-      <div className="flex gap-4">
-        <div className="flex-1 overflow-auto rounded-[32px] bg-white shadow-[0_28px_110px_rgba(0,0,0,0.14)]">
-          <table className="min-w-300 w-full border-collapse text-sm border border-slate-300/70">
+      <div className="flex gap-4 ">
+        <div className="flex-1 overflow-auto rounded-t-lg bg-white shadow">
+          <table className="min-w-300 w-full text-sm text-slate-700 border-collapse shadow">
             <thead>
-              <tr className="bg-[#1E6F9F] text-white shadow-inner">
-                <th rowSpan={2} className="border-2 px-3 py-3 text-center">
+              <tr className="bg-[#13394f] text-white rounded">
+                <th
+                  rowSpan={2}
+                  className="px-4 py-4 text-center  border  bg-slate-400"
+                >
                   No
                 </th>
-                <th rowSpan={2} className="border-2 px-3 py-3 text-center">
+                <th
+                  rowSpan={2}
+                  className="px-4 py-4 text-center border bg-slate-400"
+                >
                   Semester
                 </th>
-                <th rowSpan={2} className="border-2 px-3 py-3 text-center">
+                <th
+                  rowSpan={2}
+                  className="px-4 py-4 text-center border bg-slate-400"
+                >
                   Kode
                 </th>
-                <th rowSpan={2} className="border-2 px-4 py-3 text-center">
+                <th
+                  rowSpan={2}
+                  className="px-6 py-4 text-center border bg-slate-400"
+                >
                   Nama Mata Kuliah
                 </th>
-                <th colSpan={3} className="border-2 px-4 py-3 text-center">
+                <th
+                  colSpan={3}
+                  className="px-6 py-4 text-center border bg-slate-400"
+                >
                   Bobot Kredit (SKS)
                 </th>
-                <th rowSpan={2} className="border-2 px-4 py-3 text-center">
+                <th
+                  rowSpan={2}
+                  className="px-6 py-4 text-center border bg-slate-400"
+                >
                   RPS
                 </th>
               </tr>
-              <tr className="bg-slate-600 text-white">
-                <th
-                  className="border border-slate-200
- px-3 py-2 text-center"
-                >
-                  Kuliah
-                </th>
-                <th
-                  className="border border-slate-200
- px-3 py-2 text-center"
-                >
-                  Seminar
-                </th>
-                <th
-                  className="border border-slate-200
- px-3 py-2 text-center"
-                >
-                  Praktikum
-                </th>
+              <tr className="bg-slate-700 text-white">
+                <th className="px-3 py-2 text-center border">Kuliah</th>
+                <th className="px-3 py-2 text-center border">Seminar</th>
+                <th className="px-3 py-2 text-center border">Praktikum</th>
               </tr>
             </thead>
 
@@ -251,96 +254,82 @@ export default function Kurikulum() {
                 <tr
                   key={r._id || i}
                   onClick={() => setActive(i)}
-                  className={`transition ${
-                    active === i ? "bg-[#1E6F9F]/15" : "hover:bg-slate-50/80"
-                  }`}
+                  className={`
+            transition
+            ${i % 2 === 0 ? "bg-slate-50" : "bg-white"}
+            ${active === i ? "bg-[#1E6F9F]/15" : "hover:bg-slate-100"} 
+          `}
                 >
-                  <td
-                    className="border border-slate-300/70
- px-3 py-2 text-center"
-                  >
+                  <td className="px-4 py-3 text-center  border border-slate-200 font-medium">
                     {i + 1}
                   </td>
-                  <td
-                    className="border border-slate-300/70
- px-3 py-2 text-center"
-                  >
+
+                  <td className="px-4 py-3 text-center  border border-slate-200 ">
                     <input
                       value={r.semester}
                       onChange={(e) => update(i, "semester", e.target.value)}
-                      className="w-full rounded-md  outline-0 px-2 py-1 text-center"
+                      className="w-full bg-transparent text-center outline-none rounded-md px-2 py-1 focus:bg-white"
                     />
                   </td>
-                  <td
-                    className="border border-slate-300/70
- px-3 py-2 text-center"
-                  >
+
+                  <td className="px-4 py-3 text-center  border border-slate-200 font-mono">
                     <input
                       value={r.kode}
                       onChange={(e) => update(i, "kode", e.target.value)}
-                      className="w-full bg-transparent outline-none px-2 py-1 text-center focus:bg-white/70 transition"
+                      className="w-full bg-transparent text-center outline-none px-2 py-1 rounded-md focus:bg-white"
                     />
                   </td>
-                  <td
-                    className="border border-slate-300/70
- px-4 py-2"
-                  >
+
+                  <td className="px-6 py-3">
+                    {" "}
                     <input
                       value={r.nama}
                       onChange={(e) => update(i, "nama", e.target.value)}
-                      className="w-full rounded-md outline-0 px-3 py-1.5"
+                      className="w-full bg-transparent outline-none px-3 py-1.5 rounded-md focus:bg-white"
                     />
                   </td>
-                  <td
-                    className="border border-slate-300/70
- px-3 py-2 text-center "
-                  >
+
+                  <td className="px-3 py-3 text-center  border border-slate-200">
                     <SkCheckbox
                       active={r.sksKuliah}
                       onClick={() => setSks(i, "sksKuliah")}
                     />
                   </td>
-                  <td
-                    className="border border-slate-300/70
- px-3 py-2 text-center"
-                  >
+
+                  <td className="px-3 py-3 text-center  border border-slate-200">
                     <SkCheckbox
                       active={r.sksSeminar}
                       onClick={() => setSks(i, "sksSeminar")}
                     />
                   </td>
-                  <td
-                    className="border border-slate-300/70
- px-3 py-2 text-center"
-                  >
+
+                  <td className="px-3 py-3 text-center  border border-slate-200">
                     <SkCheckbox
                       active={r.sksPraktikum}
                       onClick={() => setSks(i, "sksPraktikum")}
                     />
                   </td>
-                  <td
-                    className="border border-slate-300/70
- px-4 py-2 text-center"
-                  >
+
+                  <td className="px-6 py-3 text-center  border border-slate-200">
                     {r._id ? (
                       r.rps ? (
                         <div className="flex items-center justify-center gap-2">
                           <a
                             href={r.rps}
                             target="_blank"
-                            className="text-xs text-cyan-500 underline truncate max-w-35"
+                            className="text-xs text-cyan-600 underline truncate max-w-36"
                           >
                             {cleanName(r.rps)}
                           </a>
                           <button
                             onClick={() => removeRps(r)}
-                            className="text-red-500"
+                            className="text-red-500 hover:text-red-600"
                           >
                             <Trash2 size={14} />
                           </button>
                         </div>
                       ) : (
-                        <label className="inline-flex items-center gap-1 text-xs cursor-pointer">
+                        <label className="inline-flex items-center gap-1 text-xs cursor-pointer text-slate-600 hover:text-[#1E6F9F]">
                           <Upload size={14} />
                           Upload
                           <input

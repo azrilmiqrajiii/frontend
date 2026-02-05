@@ -84,36 +84,36 @@ export default function CapaianPembelajaran() {
       </div>
 
       {/* TABLE */}
-      <div className="overflow-x-auto bg-white">
-        <table className="min-w-[1100px] w-full text-sm border border-slate-300">
-          <thead className="bg-slate-200 text-slate-800 text-center">
-            <tr>
-              <th rowSpan={2} className="border border-slate-300 px-3 py-2">
+      <div className="overflow-x-auto bg-white rounded-lg border border-slate-200 shadow-sm">
+        <table className="min-w-300 w-full text-sm text-slate-700 border-collapse">
+          <thead>
+            <tr className="bg-slate-700 text-white text-center">
+              <th rowSpan={2} className="border px-4 py-3 rounded-tl-lg">
                 No
               </th>
-              <th rowSpan={2} className="border border-slate-300 px-3 py-2">
+              <th rowSpan={2} className="border px-4 py-3">
                 Tahun Lulus
               </th>
-              <th rowSpan={2} className="border border-slate-300 px-3 py-2">
+              <th rowSpan={2} className="border px-4 py-3">
                 Jumlah Lulusan
               </th>
-              <th rowSpan={2} className="border border-slate-300 px-3 py-2">
+              <th rowSpan={2} className="border px-4 py-3">
                 Masa Studi (Thn)
               </th>
-              <th colSpan={3} className="border border-slate-300 px-3 py-2">
+              <th colSpan={3} className="border px-4 py-3">
                 IPK
               </th>
-              <th rowSpan={2} className="border border-slate-300 px-3 py-2">
+              <th rowSpan={2} className="border px-4 py-3">
                 SK Yudisium
               </th>
-              <th rowSpan={2} className="border border-slate-300 px-3 py-2">
+              <th rowSpan={2} className="border px-4 py-3 rounded-tr-lg">
                 Aksi
               </th>
             </tr>
-            <tr>
-              <th className="border border-slate-300 px-3 py-2">Min</th>
-              <th className="border border-slate-300 px-3 py-2">Rata-rata</th>
-              <th className="border border-slate-300 px-3 py-2">Max</th>
+            <tr className="bg-slate-600 text-white text-center">
+              <th className="px-3 py-2 border">Min</th>
+              <th className="px-3 py-2 border">Rata-rata</th>
+              <th className="px-3 py-2 border">Max</th>
             </tr>
           </thead>
 
@@ -121,9 +121,13 @@ export default function CapaianPembelajaran() {
             {rows.map((r, i) => (
               <tr
                 key={r._id || i}
-                className="odd:bg-white even:bg-slate-50 hover:bg-slate-100"
+                className={`
+                  transition
+                  ${i % 2 === 0 ? "bg-white" : "bg-slate-200"}
+                  hover:bg-slate-100
+                `}
               >
-                <td className="border border-slate-300 px-3 py-2 text-center">
+                <td className="px-4 py-2 text-center border border-slate-300 font-medium">
                   {i + 1}
                 </td>
 
@@ -137,18 +141,18 @@ export default function CapaianPembelajaran() {
                 ].map((k) => (
                   <td
                     key={k}
-                    className="border border-slate-300 px-3 py-2 text-center"
+                    className="px-4 py-2 tex border border-slate-300 text-center"
                   >
                     <input
                       type="number"
                       value={r[k] ?? ""}
                       onChange={(e) => update(i, k, e.target.value)}
-                      className="w-20 bg-transparent text-center outline-none"
+                      className="w-full bg-transparent text-center outline-none rounded-md focus:bg-white "
                     />
                   </td>
                 ))}
 
-                <td className="border border-slate-300 px-3 py-2 text-center text-sm">
+                <td className="px-4 py-2 text-center border border-slate-300 text-sm">
                   {r._id ? (
                     r.skYudisium ? (
                       <a
@@ -168,11 +172,10 @@ export default function CapaianPembelajaran() {
                           type="file"
                           accept="application/pdf"
                           onChange={async (e) => {
-                            const res =
-                              await capaianPembelajaranAPI.uploadSk(
-                                r._id,
-                                e.target.files[0],
-                              );
+                            const res = await capaianPembelajaranAPI.uploadSk(
+                              r._id,
+                              e.target.files[0],
+                            );
                             update(i, "skYudisium", res.data.skYudisium);
                           }}
                         />
@@ -183,10 +186,10 @@ export default function CapaianPembelajaran() {
                   )}
                 </td>
 
-                <td className="border border-slate-300 px-3 py-2 text-center">
+                <td className="px-4 py-2 text-center border border-slate-300">
                   <button
                     onClick={() => removeRow(i)}
-                    className="text-red-500 hover:bg-red-100 p-1 rounded"
+                    className="text-red-500 hover:bg-red-100 p-1 rounded-md transition"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -198,8 +201,8 @@ export default function CapaianPembelajaran() {
       </div>
 
       {/* ADD */}
-      <Button onClick={addRow} className="w-fit">
-        <Plus size={16} /> Tambah Baris
+      <Button onClick={addRow} className=" text-sm bg-blue-800 rounded-4xl">
+        <Plus size={10} /> Tambah Baris
       </Button>
     </div>
   );

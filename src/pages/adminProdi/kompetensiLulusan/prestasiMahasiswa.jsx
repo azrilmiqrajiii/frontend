@@ -125,10 +125,7 @@ const PrestasiMahasiswa = () => {
         </td>
 
         {["wilayah", "nasional", "internasional"].map((t) => (
-          <td
-            key={t}
-            className="border border-slate-300 px-3 py-2 text-center"
-          >
+          <td key={t} className="border border-slate-300 px-3 py-2 text-center">
             <input
               type="radio"
               className="accent-[#1E6F9F]"
@@ -195,8 +192,8 @@ const PrestasiMahasiswa = () => {
       </div>
 
       <div className="overflow-x-auto bg-white border border-slate-300 rounded-lg">
-        <table className="w-full min-w-[900px] text-sm border-collapse">
-          <thead className="bg-[#1E6F9F] text-white text-center">
+        <table className="w-full min-w-225 text-sm border-collapse">
+          <thead className="bg-[#5593b7] text-white text-center">
             <tr>
               <th rowSpan={2} className="border border-slate-300 px-3 py-2">
                 No
@@ -218,12 +215,8 @@ const PrestasiMahasiswa = () => {
               </th>
             </tr>
             <tr>
-              <th className="border border-slate-300 px-3 py-2">
-                Wilayah
-              </th>
-              <th className="border border-slate-300 px-3 py-2">
-                Nasional
-              </th>
+              <th className="border border-slate-300 px-3 py-2">Wilayah</th>
+              <th className="border border-slate-300 px-3 py-2">Nasional</th>
               <th className="border border-slate-300 px-3 py-2">
                 Internasional
               </th>
