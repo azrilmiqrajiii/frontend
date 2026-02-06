@@ -1,17 +1,18 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import useAuth from "../context/useAuth";
 
 export default function RequireGuest({ children }) {
   const { user, loading } = useAuth();
 
-  if (loading) return <div className="p-10">Loading...</div>;
+  if (loading) return null;
 
   if (user) {
     if (user.role === "ADMIN_PRODI")
       return <Navigate to="/admin-prodi" replace />;
     if (user.role === "UNIT") return <Navigate to="/unit" replace />;
-    return <Navigate to="/" replace />;
+    if (user.role === "DOSEN") return <Navigate to="/dosen" replace />;
+    if (user.role === "MAHASISWA") return <Navigate to="/mahasiswa" replace />;
   }
 
-  return children;
+  return children ? children : <Outlet />;
 }

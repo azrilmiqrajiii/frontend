@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import useAuth from "../context/useAuth";
 
 export default function RequireAuth({ children, role }) {
@@ -10,5 +10,5 @@ export default function RequireAuth({ children, role }) {
 
   if (role && user.role !== role) return <Navigate to="/403" replace />;
 
-  return children;
+  return children ? children : <Outlet />;
 }

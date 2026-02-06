@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Button from "../Elements/Button";
 import InputForm from "../Elements/Input";
 import { authAPI } from "../../api";
 import useAuth from "../../context/useAuth";
 
 const FormLogin = () => {
-  const navigate = useNavigate();
   const { setUser } = useAuth();
 
   const [form, setForm] = useState({
@@ -41,24 +39,10 @@ const FormLogin = () => {
         password: form.password,
       });
 
-      const user = res.data.user;
-
-      setUser(user);
-
-      if (user.role === "ADMIN_PRODI") {
-        navigate("/admin-prodi");
-      } else if (user.role === "UNIT") {
-        navigate("/unit");
-      } else if (user.role === "DOSEN") {
-        navigate("/dosen");
-      } else if (user.role === "MAHASISWA") {
-        navigate("/mahasiswa");
-      } else {
-        setError("Role tidak dikenali");
-      }
+      setUser(res.data.user);
     } catch (err) {
       setError(
-        err.response?.data?.message || "Login gagal. Silakan coba lagi."
+        err.response?.data?.message || "Login gagal. Silakan coba lagi.",
       );
     } finally {
       setLoading(false);

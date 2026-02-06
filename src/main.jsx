@@ -18,6 +18,11 @@ import KompetensiLulusan from "./pages/adminProdi/kompetensiLulusan.jsx";
 import CapaianPembelajaran from "./pages/adminProdi/kompetensiLulusan/capaianPembelajaran.jsx";
 import PrestasiMahasiswa from "./pages/adminProdi/kompetensiLulusan/prestasiMahasiswa.jsx";
 import WaktuTungguLulusan from "./pages/adminProdi/kompetensiLulusan/waktuTungguLulusan.jsx";
+import MahasiswaLayouts from "./components/Layouts/MahasiswaLayouts.jsx";
+import DashboardMahasiswa from "./pages/mahasiswa/DashboardMahasiswa.jsx";
+import MahasiswaGate from "./pages/mahasiswa/MahasiswaGate.jsx";
+import OnboardingPassword from "./pages/mahasiswa/onBoarding/Password.jsx";
+import OnboardingProfile from "./pages/mahasiswa/onBoarding/profile.jsx";
 
 const router = createBrowserRouter([
   {
@@ -81,14 +86,33 @@ const router = createBrowserRouter([
   //   ),
   // },
 
-  // {
-  //   path: "/mahasiswa",
-  //   element: (
-  //     <RequireAuth role="MAHASISWA">
-  //       <Mahasiswa />
-  //     </RequireAuth>
-  //   ),
-  // },
+  {
+  path: "/mahasiswa",
+  element: (
+    <RequireAuth role="MAHASISWA">
+      <MahasiswaLayouts />
+    </RequireAuth>
+  ),
+  children: [
+    {
+      index: true,
+      element: <MahasiswaGate />,
+    },
+    {
+      path: "onboarding/password",
+      element: <OnboardingPassword />,
+    },
+    {
+      path: "onboarding/profile",
+      element: <OnboardingProfile />,
+    },
+    {
+      path: "dashboard",
+      element: <DashboardMahasiswa />,
+    },
+  ],
+},
+
 ]);
 
 createRoot(document.getElementById("root")).render(
