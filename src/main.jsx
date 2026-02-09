@@ -1,12 +1,15 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import "./index.css";
 import RequireAuth from "./auth/RequireAuth.jsx";
 import LoginPage from "./pages/login.jsx";
 import AuthProvider from "./context/AuthProvider.jsx";
 import NotFound from "./pages/notFound.jsx";
-import Forbidden from "./pages/forbidden.jsx";
 import Unit from "./pages/unit.jsx";
 import HomePage from "./pages/home.jsx";
 import Dashboard from "./pages/adminProdi/Dashboard.jsx";
@@ -20,9 +23,9 @@ import PrestasiMahasiswa from "./pages/adminProdi/kompetensiLulusan/prestasiMaha
 import WaktuTungguLulusan from "./pages/adminProdi/kompetensiLulusan/waktuTungguLulusan.jsx";
 import MahasiswaLayouts from "./components/Layouts/MahasiswaLayouts.jsx";
 import DashboardMahasiswa from "./pages/mahasiswa/DashboardMahasiswa.jsx";
-import MahasiswaGate from "./pages/mahasiswa/MahasiswaGate.jsx";
 import OnboardingPassword from "./pages/mahasiswa/onBoarding/Password.jsx";
 import OnboardingProfile from "./pages/mahasiswa/onBoarding/profile.jsx";
+import MahasiswaGuard from "./pages/mahasiswa/mahasiswaGuard.jsx";
 
 const router = createBrowserRouter([
   {
@@ -86,32 +89,25 @@ const router = createBrowserRouter([
   //   ),
   // },
 
-  {
+{
   path: "/mahasiswa",
   element: (
     <RequireAuth role="MAHASISWA">
-      <MahasiswaLayouts />
+      <MahasiswaGuard />
     </RequireAuth>
   ),
   children: [
     {
-      index: true,
-      element: <MahasiswaGate />,
-    },
-    {
-      path: "onboarding/password",
-      element: <OnboardingPassword />,
-    },
-    {
-      path: "onboarding/profile",
-      element: <OnboardingProfile />,
-    },
-    {
-      path: "dashboard",
-      element: <DashboardMahasiswa />,
+      element: <MahasiswaLayouts />,
+      children: [
+        { index: true, element: <Navigate to="dashboard" replace /> },
+        { path: "password", element: <OnboardingPassword /> },
+        { path: "profile", element: <OnboardingProfile /> },
+        { path: "dashboard", element: <DashboardMahasiswa /> },
+      ],
     },
   ],
-},
+}
 
 ]);
 

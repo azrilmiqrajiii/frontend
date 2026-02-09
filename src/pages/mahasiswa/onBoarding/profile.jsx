@@ -1,103 +1,105 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { mahasiswaAPI } from "../../../api/mahasiswa.api";
 import useAuth from "../../../context/useAuth";
-import Button from "../../../components/Elements/Button";
-import InputForm from "../../../components/Elements/Input";
 
-export default function OnboardingProfile() {
-  const { user, setUser } = useAuth();
-  const navigate = useNavigate();
+export default function ProfileMahasiswa() {
+  const { setUser } = useAuth();
 
   const [form, setForm] = useState({
     nim: "",
     semester: "",
     departemen: "",
-    peran: "REGULER",
+    peran: "",
+    prodi: "",
     periodePraktik: "",
   });
 
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleChange = (e) => {
+  const change = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
 
-    const values = Object.values(form);
-    if (values.some((v) => !v)) return setError("Semua data wajib diisi");
+    try {
+      await mahasiswaAPI.updateProfile(form);
 
-    setUser({
-      ...user,
-      ...form,
-      profileComplete: true,
-    });
+      const res = await fetch(import.meta.env.VITE_API_URL + "/auth/me", {
+        credentials: "include",
+      });
+      const data = await res.json();
+      setUser(data.user);
 
-    navigate("/mahasiswa/dashboard", { replace: true });
+      window.location.href = "/mahasiswa";
+    } catch (err) {
+      setError(err.response?.data?.message || "Gagal");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow">
-      <h1 className="text-xl font-semibold mb-4">Lengkapi Profil Mahasiswa</h1>
+    <div className="max-w-xl mx-auto mt-10">
+      <h1 className="text-xl font-semibold mb-6">Lengkapi Profil Mahasiswa</h1>
 
-      {error && (
-        <div className="bg-red-100 text-red-700 text-sm p-3 rounded mb-4">
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
-        <InputForm
-          title="NIM"
+      <form onSubmit={submit} className="space-y-4">
+        <input
           name="nim"
-          value={form.nim}
-          onChange={handleChange}
+          placeholder="NIM"
+          onChange={change}
+          className="input"
         />
-
-        <InputForm
-          title="Semester"
+        <input
           name="semester"
           type="number"
-          value={form.semester}
-          onChange={handleChange}
+          placeholder="Semester"
+          onChange={change}
+          className="input"
         />
-
-        <InputForm
-          title="Departemen"
+        <input
           name="departemen"
-          value={form.departemen}
-          onChange={handleChange}
+          placeholder="Departemen"
+          onChange={change}
+          className="input"
         />
 
-        <div>
-          <label className="text-sm font-medium">Peran</label>
-          <select
-            name="peran"
-            value={form.peran}
-            onChange={handleChange}
-            className="w-full border rounded px-3 py-2 mt-1"
-          >
-            <option value="REGULER">Reguler</option>
-            <option value="MAGANG">Magang</option>
-            <option value="PKL">PKL</option>
-          </select>
-        </div>
+        <select name="peran" onChange={change} className="input">
+          <option value="">Pilih Peran</option>
+          <option value="REGULER">Reguler</option>
+          <option value="MAGANG">Magang</option>
+          <option value="PKL">PKL</option>
+        </select>
 
-        <div className="col-span-2">
-          <InputForm
-            title="Periode Praktik"
-            name="periodePraktik"
-            value={form.periodePraktik}
-            onChange={handleChange}
-          />
-        </div>
+        <select name="prodi" onChange={change} className="input">
+          <option value="">Pilih Prodi</option>
+          <option value="TATA_HIDANG">Tata Hidang</option>
+          <option value="DIVISI_KAMAR">Divisi Kamar</option>
+          <option value="SENI_KULINER">Seni Kuliner</option>
+          <option value="USAHA_PERJALANAN_WISATA">
+            Usaha Perjalanan Wisata
+          </option>
+        </select>
 
-        <div className="col-span-2">
-          <Button type="submit" className="w-full">
-            Simpan Profil
-          </Button>
-        </div>
+        <input
+          name="periodePraktik"
+          placeholder="Periode Praktik (contoh: 2025 Genap)"
+          onChange={change}
+          className="input"
+        />
+
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+
+        <button
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-2 rounded"
+        >
+          {loading ? "Menyimpan..." : "Simpan Profil"}
+        </button>
       </form>
     </div>
   );

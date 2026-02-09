@@ -8,14 +8,24 @@ export default function LoginPage() {
 
   if (loading) return null;
 
-  if (user?.role === "ADMIN_PRODI")
-    return <Navigate to="/admin-prodi" replace />;
+  if (user) {
+    switch (user.role) {
+      case "ADMIN_PRODI":
+        return <Navigate to="/admin-prodi" replace />;
 
-  if (user?.role === "UNIT") return <Navigate to="/unit" replace />;
+      case "UNIT":
+        return <Navigate to="/unit" replace />;
 
-  if (user?.role === "DOSEN") return <Navigate to="/dosen" replace />;
+      case "DOSEN":
+        return <Navigate to="/dosen" replace />;
 
-  if (user?.role === "MAHASISWA") return <Navigate to="/mahasiswa" replace />;
+      case "MAHASISWA":
+        return <Navigate to="/mahasiswa" replace />;
+
+      default:
+        return <Navigate to="/forbidden" replace />;
+    }
+  }
 
   return (
     <AuthLayouts title="Masuk">

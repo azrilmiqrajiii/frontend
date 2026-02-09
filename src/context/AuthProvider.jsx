@@ -17,6 +17,7 @@ export default function AuthProvider({ children }) {
         setLoading(false);
       }
     };
+
     loadUser();
   }, []);
 
