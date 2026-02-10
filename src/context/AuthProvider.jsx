@@ -1,37 +1,37 @@
-import { useEffect, useState } from "react"
-import { AuthContext } from "./AuthContext"
-import { authAPI } from "../api"
+import { useEffect, useState } from "react";
+import { AuthContext } from "./AuthContext";
+import { authAPI } from "../api";
 
 export default function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const loadUser = async () => {
     try {
-      const res = await authAPI.me()
-      setUser(res.data.user)
+      const res = await authAPI.me();
+      setUser(res.data);
     } catch {
-      setUser(null)
+      setUser(null);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    loadUser()
-  }, [])
+    loadUser();
+  }, []);
 
   const refreshUser = async () => {
-    await loadUser()
-  }
+    await loadUser();
+  };
 
   const logout = async () => {
     try {
-      await authAPI.logout()
+      await authAPI.logout();
     } finally {
-      setUser(null)
+      setUser(null);
     }
-  }
+  };
 
   return (
     <AuthContext.Provider
@@ -45,5 +45,5 @@ export default function AuthProvider({ children }) {
     >
       {children}
     </AuthContext.Provider>
-  )
+  );
 }

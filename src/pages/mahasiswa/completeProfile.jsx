@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { mahasiswaAPI } from "../../api/mahasiswa.api";
 import Button from "../../components/Elements/Button";
 import OnboardingStepper from "../../components/Fragments/OnBoardingStepper";
+import useAuth from "../../context/useAuth";
 
 const PRODI_OPTIONS = [
   "TATA_HIDANG",
@@ -14,6 +15,7 @@ const PRODI_OPTIONS = [
 const PERAN_OPTIONS = ["REGULER", "MAGANG", "PKL"];
 
 export default function CompleteProfile() {
+  const { refreshUser } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -48,6 +50,7 @@ export default function CompleteProfile() {
         ...form,
         semester: Number(form.semester),
       });
+      await refreshUser(); // 🔥 penting
       navigate("/mahasiswa/dashboard", { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || "Gagal menyimpan profil");
