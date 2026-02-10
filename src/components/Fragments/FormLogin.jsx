@@ -3,9 +3,11 @@ import Button from "../Elements/Button";
 import InputForm from "../Elements/Input";
 import { authAPI } from "../../api";
 import useAuth from "../../context/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const FormLogin = () => {
-  const { setUser } = useAuth();
+  const { refreshUser } = useAuth();
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     email: "",
@@ -34,12 +36,13 @@ const FormLogin = () => {
     setLoading(true);
 
     try {
-      const res = await authAPI.login({
+      await authAPI.login({
         email: form.email,
         password: form.password,
       });
 
-      setUser(res.data.user);
+      await refreshUser();
+      navigate("/mahasiswa/dashboard", { replace: true });
     } catch (err) {
       setError(
         err.response?.data?.message || "Login gagal. Silakan coba lagi.",

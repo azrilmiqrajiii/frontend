@@ -1,11 +1,13 @@
 import useAuth from "../../context/useAuth";
 
 export default function MahasiswaDashboard() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
+  if (loading) return null;
+  if (!user) return null;
   return (
     <div className="space-y-10">
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-blue-600 to-sky-500 p-8 text-white shadow-xl">
+      <section className="relative overflow-hidden rounded-3xl bg-linear-to-br from-indigo-600 via-blue-600 to-sky-500 p-8 text-white shadow-xl">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.25),transparent_40%)]" />
         <div className="relative">
           <p className="text-sm uppercase tracking-widest text-white/80">
