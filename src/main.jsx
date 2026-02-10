@@ -22,10 +22,12 @@ import CapaianPembelajaran from "./pages/adminProdi/kompetensiLulusan/capaianPem
 import PrestasiMahasiswa from "./pages/adminProdi/kompetensiLulusan/prestasiMahasiswa.jsx";
 import WaktuTungguLulusan from "./pages/adminProdi/kompetensiLulusan/waktuTungguLulusan.jsx";
 import MahasiswaLayouts from "./components/Layouts/MahasiswaLayouts.jsx";
-import DashboardMahasiswa from "./pages/mahasiswa/DashboardMahasiswa.jsx";
-import OnboardingPassword from "./pages/mahasiswa/onBoarding/Password.jsx";
-import OnboardingProfile from "./pages/mahasiswa/onBoarding/profile.jsx";
-import MahasiswaGuard from "./pages/mahasiswa/mahasiswaGuard.jsx";
+import ChangePassword from "./pages/mahasiswa/changePassword.jsx";
+import CompleteProfile from "./pages/mahasiswa/completeProfile.jsx";
+import MahasiswaGuard from "./auth/MahasiswaGuard.jsx";
+import MahasiswaDashboard from "./pages/mahasiswa/dashboard.jsx";
+import MahasiswaEntry from "./auth/MahasiswaEntry.jsx";
+import ChangePasswordGuard from "./auth/ChangePasswordGuard.jsx";
 
 const router = createBrowserRouter([
   {
@@ -88,27 +90,22 @@ const router = createBrowserRouter([
   //     </RequireAuth>
   //   ),
   // },
+  {
+    path: "/mahasiswa",
+    element: <MahasiswaLayouts />,
+    children: [
+      { index: true, element: <MahasiswaEntry /> },
 
-{
-  path: "/mahasiswa",
-  element: (
-    <RequireAuth role="MAHASISWA">
-      <MahasiswaGuard />
-    </RequireAuth>
-  ),
-  children: [
-    {
-      element: <MahasiswaLayouts />,
-      children: [
-        { index: true, element: <Navigate to="dashboard" replace /> },
-        { path: "password", element: <OnboardingPassword /> },
-        { path: "profile", element: <OnboardingProfile /> },
-        { path: "dashboard", element: <DashboardMahasiswa /> },
-      ],
-    },
-  ],
-}
+      { path: "change-password", element: <ChangePassword /> },
 
+      { path: "complete-profile", element: <CompleteProfile /> },
+
+      {
+        element: <MahasiswaGuard />,
+        children: [{ path: "dashboard", element: <MahasiswaDashboard /> }],
+      },
+    ],
+  },
 ]);
 
 createRoot(document.getElementById("root")).render(
