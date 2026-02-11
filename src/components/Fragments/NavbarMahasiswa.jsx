@@ -96,11 +96,10 @@ export default function NavbarMahasiswa() {
           {menuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
-
       {menuOpen && (
-        <div className="md:hidden border-t bg-white px-4 py-4 space-y-4">
+        <div className="md:hidden border-t border-slate-400 bg-white px-4 py-4 space-y-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold">
+            <div className="h-10 w-10 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold">
               {getInitials(user?.name)}
             </div>
 

@@ -1,10 +1,8 @@
 import useAuth from "../../context/useAuth";
 
 export default function MahasiswaDashboard() {
-  const { user, loading } = useAuth();
-
-  if (loading) return null;
-  if (!user) return null;
+  const { user } = useAuth();
+  
   return (
     <div className="space-y-10">
       <section className="relative overflow-hidden rounded-3xl bg-linear-to-br from-indigo-600 via-blue-600 to-sky-500 p-8 text-white shadow-xl">
@@ -93,7 +91,6 @@ function Stat({ label, value, accent }) {
     </div>
   );
 }
-
 function Service({ title, desc, tag }) {
   return (
     <div className="group relative rounded-2xl bg-white/80 p-6 shadow-md backdrop-blur transition hover:-translate-y-1 hover:shadow-xl">
@@ -103,7 +100,6 @@ function Service({ title, desc, tag }) {
 
       <h3 className="text-base font-semibold text-slate-700">{title}</h3>
       <p className="mt-2 text-sm text-slate-500">{desc}</p>
-
       <div className="mt-6 text-sm font-medium text-blue-600 opacity-0 transition group-hover:opacity-100">
         Buka →
       </div>
