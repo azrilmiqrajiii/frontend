@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom"
 import {
   ChevronDown,
   X,
@@ -7,39 +7,31 @@ import {
   LayoutDashboard,
   ClipboardList,
   Folder,
-} from "lucide-react";
-import { useState } from "react";
-import useAuth from "../../context/useAuth";
+} from "lucide-react"
+import { useState } from "react"
+import useAuth from "../../context/useAuth"
 
 const Sidebar = ({ open, onClose }) => {
-  const { user } = useAuth();
+  const { user } = useAuth()
 
-  const [collapsed, setCollapsed] = useState(false);
-  const [kinerjaOpen, setKinerjaOpen] = useState(true);
-  const [lulusanOpen, setLulusanOpen] = useState(true);
-  const [tilcOpen, setTilcOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false)
+  const [kinerjaOpen, setKinerjaOpen] = useState(true)
+  const [lulusanOpen, setLulusanOpen] = useState(true)
+  const [tilcOpen, setTilcOpen] = useState(false)
 
-  const isMahasiswa = user?.role === "MAHASISWA";
-  const isSupervisor = isMahasiswa && user?.isSupervisorTILC;
+  const isMahasiswa = user?.role === "MAHASISWA"
+  const isSupervisor = isMahasiswa && user?.isSupervisorTILC
 
   const mainMenu = [
     { path: "", label: "Dashboard", icon: LayoutDashboard },
     { path: "led", label: "Laporan Evaluasi Diri", icon: ClipboardList },
-  ];
+  ]
 
   const kompetensiLulusan = [
-    {
-      key: "a",
-      path: "lulusan/capaian-pembelajaran",
-      label: "Capaian Pembelajaran",
-    },
-    {
-      key: "b",
-      path: "lulusan/prestasi-mahasiswa",
-      label: "Prestasi Mahasiswa",
-    },
+    { key: "a", path: "lulusan/capaian-pembelajaran", label: "Capaian Pembelajaran" },
+    { key: "b", path: "lulusan/prestasi-mahasiswa", label: "Prestasi Mahasiswa" },
     { key: "c", path: "lulusan/waktu-tunggu", label: "Waktu Tunggu Lulusan" },
-  ];
+  ]
 
   const tilc = [
     "Unit Bahasa",
@@ -52,35 +44,35 @@ const Sidebar = ({ open, onClose }) => {
     "IT",
     "Humas",
     "PKN",
-  ];
+  ]
 
   return (
     <>
       <aside
         className={`
           fixed md:static z-40 inset-y-0 left-0
-          ${collapsed ? "w-20" : "w-56 lg:w-60"}
-          bg-white shadow-lg p-3 overflow-y-auto
+          ${collapsed ? "w-20" : "w-64"}
+          bg-slate-50 border-r border-slate-200
+          shadow-sm
+          p-4 overflow-y-auto
           transition-all duration-300
           ${open ? "translate-x-0" : "-translate-x-full"}
           md:translate-x-0
         `}
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-6">
           {!collapsed && (
-            <div className="text-sm font-semibold text-[#0F3D62]">Menu</div>
+            <div className="text-sm font-semibold tracking-wide text-[#0F3D62]">
+              Navigation
+            </div>
           )}
 
           <div className="flex items-center gap-1">
             <button
               onClick={() => setCollapsed((v) => !v)}
-              className="hidden md:flex p-1 rounded hover:bg-slate-100"
+              className="hidden md:flex p-1 rounded-lg hover:bg-slate-200 transition"
             >
-              {collapsed ? (
-                <ChevronRight size={18} />
-              ) : (
-                <ChevronLeft size={18} />
-              )}
+              {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
             </button>
 
             <button onClick={onClose} className="md:hidden">
@@ -89,9 +81,9 @@ const Sidebar = ({ open, onClose }) => {
           </div>
         </div>
 
-        <nav className="space-y-1">
+        <nav className="space-y-1 text-sm">
           {mainMenu.map((m) => {
-            const Icon = m.icon;
+            const Icon = m.icon
             return (
               <NavLink
                 key={m.path}
@@ -99,29 +91,33 @@ const Sidebar = ({ open, onClose }) => {
                 end
                 onClick={onClose}
                 className={({ isActive }) =>
-                  `flex items-center justify-center md:justify-start gap-3 px-3 py-2 rounded-lg text-[13px] font-semibold ${
+                  `
+                  relative flex items-center gap-3
+                  px-3 py-2.5 rounded-xl
+                  font-medium transition-all
+                  ${
                     isActive
-                      ? "bg-blue-100 text-[#1E6F9F]"
-                      : "text-slate-700 hover:bg-slate-100"
-                  }`
+                      ? "bg-gradient-to-r from-[#1E6F9F]/10 to-[#1E6F9F]/5 text-[#1E6F9F]"
+                      : "text-slate-600 hover:bg-slate-200"
+                  }
+                  ${collapsed ? "justify-center" : ""}
+                `
                 }
               >
-                {collapsed ? <Icon size={22} /> : <span>{m.label}</span>}
+                <Icon size={20} />
+                {!collapsed && <span>{m.label}</span>}
               </NavLink>
-            );
+            )
           })}
 
           {isMahasiswa && !isSupervisor && (
             <NavLink
               to="refleksi"
               onClick={onClose}
-              className="flex items-center justify-center md:justify-start gap-3 px-3 py-2 rounded-lg text-[13px] font-semibold text-slate-700 hover:bg-slate-100"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-slate-600 hover:bg-slate-200 transition"
             >
-              {collapsed ? (
-                <ClipboardList size={22} />
-              ) : (
-                <span>Refleksi Harian</span>
-              )}
+              <ClipboardList size={20} />
+              {!collapsed && <span>Refleksi Harian</span>}
             </NavLink>
           )}
 
@@ -129,27 +125,23 @@ const Sidebar = ({ open, onClose }) => {
             <NavLink
               to="supervisor"
               onClick={onClose}
-              className="flex items-center justify-center md:justify-start gap-3 px-3 py-2 rounded-lg text-[13px] font-semibold text-slate-700 hover:bg-slate-100"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-slate-600 hover:bg-slate-200 transition"
             >
-              {collapsed ? (
-                <ClipboardList size={22} />
-              ) : (
-                <span>DCC Supervisor</span>
-              )}
+              <ClipboardList size={20} />
+              {!collapsed && <span>DCC Supervisor</span>}
             </NavLink>
           )}
 
           <button
             onClick={() => setKinerjaOpen((v) => !v)}
-            className="w-full flex items-center justify-center md:justify-start gap-3 px-3 py-2 rounded-lg text-[13px] font-semibold text-slate-700 hover:bg-slate-100"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-slate-600 hover:bg-slate-200 transition"
           >
-            {collapsed ? (
-              <Folder size={22} />
-            ) : (
+            <Folder size={20} />
+            {!collapsed && (
               <>
                 <span className="flex-1 text-left">Laporan Kinerja</span>
                 <ChevronDown
-                  size={14}
+                  size={16}
                   className={`transition ${kinerjaOpen ? "rotate-180" : ""}`}
                 />
               </>
@@ -157,40 +149,31 @@ const Sidebar = ({ open, onClose }) => {
           </button>
 
           {!collapsed && kinerjaOpen && (
-            <div className="ml-2 space-y-0.5">
-              <NavLink
-                to="visi-misi"
-                className="block px-3 py-1.5 text-[13px] text-slate-600 hover:bg-slate-100 rounded"
-              >
+            <div className="ml-6 mt-1 space-y-1">
+              <NavLink to="visi-misi" className="block px-3 py-1.5 rounded-lg text-slate-500 hover:bg-slate-200 transition">
                 1. Visi & Misi
               </NavLink>
 
-              <NavLink
-                to="kurikulum"
-                className="block px-3 py-1.5 text-[13px] text-slate-600 hover:bg-slate-100 rounded"
-              >
+              <NavLink to="kurikulum" className="block px-3 py-1.5 rounded-lg text-slate-500 hover:bg-slate-200 transition">
                 2. Kurikulum
               </NavLink>
 
               <button
                 onClick={() => setLulusanOpen((v) => !v)}
-                className="w-full flex items-center justify-between px-3 py-1.5 text-[13px] text-slate-600 hover:bg-slate-100 rounded"
+                className="w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-slate-500 hover:bg-slate-200 transition"
               >
                 <span>3. Kompetensi Lulusan</span>
-                <ChevronDown
-                  size={14}
-                  className={`transition ${lulusanOpen ? "rotate-180" : ""}`}
-                />
+                <ChevronDown size={14} className={`transition ${lulusanOpen ? "rotate-180" : ""}`} />
               </button>
 
               {lulusanOpen && (
-                <div className="ml-6 space-y-0.5">
+                <div className="ml-4 space-y-1">
                   {kompetensiLulusan.map((s) => (
                     <NavLink
                       key={s.path}
                       to={s.path}
                       onClick={onClose}
-                      className="block px-2 py-1 text-[12px] text-slate-500 hover:bg-slate-100 rounded"
+                      className="block px-3 py-1 text-[13px] rounded-md text-slate-500 hover:bg-slate-200 transition"
                     >
                       {s.key}. {s.label}
                     </NavLink>
@@ -209,7 +192,7 @@ const Sidebar = ({ open, onClose }) => {
                   key={path}
                   to={path}
                   onClick={onClose}
-                  className="block px-3 py-1.5 text-[13px] text-slate-600 hover:bg-slate-100 rounded"
+                  className="block px-3 py-1.5 rounded-lg text-slate-500 hover:bg-slate-200 transition"
                 >
                   {no}. {label}
                 </NavLink>
@@ -217,22 +200,16 @@ const Sidebar = ({ open, onClose }) => {
 
               <button
                 onClick={() => setTilcOpen((v) => !v)}
-                className="w-full flex items-center justify-between px-3 py-1.5 text-[13px] text-slate-600 hover:bg-slate-100 rounded"
+                className="w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-slate-500 hover:bg-slate-200 transition"
               >
                 <span>9. Integrasi TILC</span>
-                <ChevronDown
-                  size={14}
-                  className={`transition ${tilcOpen ? "rotate-180" : ""}`}
-                />
+                <ChevronDown size={14} className={`transition ${tilcOpen ? "rotate-180" : ""}`} />
               </button>
 
               {tilcOpen && (
-                <div className="ml-6 space-y-0.5">
+                <div className="ml-4 space-y-1">
                   {tilc.map((t) => (
-                    <div
-                      key={t}
-                      className="px-2 py-1 text-[12px] text-slate-500"
-                    >
+                    <div key={t} className="px-3 py-1 text-[13px] text-slate-500">
                       {t}
                     </div>
                   ))}
@@ -246,11 +223,11 @@ const Sidebar = ({ open, onClose }) => {
       {open && (
         <div
           onClick={onClose}
-          className="fixed inset-0 bg-black/30 z-30 md:hidden"
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-30 md:hidden"
         />
       )}
     </>
-  );
-};
+  )
+}
 
-export default Sidebar;
+export default Sidebar

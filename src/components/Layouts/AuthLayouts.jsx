@@ -1,52 +1,50 @@
-import logo from "/images/logo.png";
+import logo from "/images/logo.png"
 
 const AuthLayouts = ({ children, title }) => {
   return (
     <div
       className="relative min-h-screen w-full flex items-center justify-center px-4 overflow-hidden
-                    bg-linear-to-br from-[#0A2540] via-[#123B6D] to-[#1E4F91]"
+                 bg-linear-to-br from-[#081C33] via-[#0F2F55] to-[#123B6D]"
     >
       <div
-        className="pointer-events-none absolute inset-0
-                      bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.25),transparent)]
-                      animate-[aurora_12s_linear_infinite] opacity-40"
+        className="absolute inset-0 pointer-events-none
+                   bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08),transparent_50%)]"
       />
 
       <div
-        className="pointer-events-none absolute inset-0
-                      bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.25),transparent_45%)]"
-      />
-
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.06]
-                      bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNCIgaGVpZ2h0PSI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IndoaXRlIi8+PC9zdmc+')]"
+        className="absolute inset-0 pointer-events-none
+                   bg-[radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.05),transparent_50%)]"
       />
 
       <div
         className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg
-                      bg-white/95 backdrop-blur rounded-md shadow-2xl
-                      p-6 sm:p-8 lg:p-10"
+                   bg-white/95 backdrop-blur-xl
+                   rounded-2xl border border-white/30
+                   shadow-[0_20px_60px_rgba(0,0,0,0.35)]
+                   p-8 sm:p-10"
       >
-        <div className="flex justify-center mb-4">
+        <div className="flex justify-center mb-6">
           <img
             src={logo}
             alt="Poltekpar Lombok"
-            className="h-12 sm:h-16 object-contain"
+            className="h-14 sm:h-16 object-contain"
           />
         </div>
 
-        <h1 className="text-center text-2xl sm:text-3xl font-bold text-[#0A2540] mb-1">
+        <h1 className="text-center text-2xl sm:text-3xl font-semibold tracking-tight text-[#0A2540]">
           {title}
         </h1>
 
-        <p className="text-center text-slate-500 text-sm sm:text-base mb-6">
+        <p className="text-center text-slate-500 text-sm sm:text-base mt-2 mb-8">
           Sistem Penjaminan Mutu – Poltekpar Lombok
         </p>
 
-        <div className="w-full">{children}</div>
+        <div className="w-full">
+          {children}
+        </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AuthLayouts;
+export default AuthLayouts
