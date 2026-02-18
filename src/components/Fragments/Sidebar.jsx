@@ -9,12 +9,18 @@ import {
   Folder,
 } from "lucide-react";
 import { useState } from "react";
+import useAuth from "../../context/useAuth";
 
 const Sidebar = ({ open, onClose }) => {
+  const { user } = useAuth();
+
   const [collapsed, setCollapsed] = useState(false);
   const [kinerjaOpen, setKinerjaOpen] = useState(true);
   const [lulusanOpen, setLulusanOpen] = useState(true);
   const [tilcOpen, setTilcOpen] = useState(false);
+
+  const isMahasiswa = user?.role === "MAHASISWA";
+  const isSupervisor = isMahasiswa && user?.isSupervisorTILC;
 
   const mainMenu = [
     { path: "", label: "Dashboard", icon: LayoutDashboard },
@@ -93,9 +99,7 @@ const Sidebar = ({ open, onClose }) => {
                 end
                 onClick={onClose}
                 className={({ isActive }) =>
-                  `flex items-center justify-center md:justify-start gap-3 px-3 py-2 rounded-lg
-                  text-[13px] font-semibold
-                  ${
+                  `flex items-center justify-center md:justify-start gap-3 px-3 py-2 rounded-lg text-[13px] font-semibold ${
                     isActive
                       ? "bg-blue-100 text-[#1E6F9F]"
                       : "text-slate-700 hover:bg-slate-100"
@@ -107,10 +111,37 @@ const Sidebar = ({ open, onClose }) => {
             );
           })}
 
+          {isMahasiswa && !isSupervisor && (
+            <NavLink
+              to="refleksi"
+              onClick={onClose}
+              className="flex items-center justify-center md:justify-start gap-3 px-3 py-2 rounded-lg text-[13px] font-semibold text-slate-700 hover:bg-slate-100"
+            >
+              {collapsed ? (
+                <ClipboardList size={22} />
+              ) : (
+                <span>Refleksi Harian</span>
+              )}
+            </NavLink>
+          )}
+
+          {isSupervisor && (
+            <NavLink
+              to="supervisor"
+              onClick={onClose}
+              className="flex items-center justify-center md:justify-start gap-3 px-3 py-2 rounded-lg text-[13px] font-semibold text-slate-700 hover:bg-slate-100"
+            >
+              {collapsed ? (
+                <ClipboardList size={22} />
+              ) : (
+                <span>DCC Supervisor</span>
+              )}
+            </NavLink>
+          )}
+
           <button
             onClick={() => setKinerjaOpen((v) => !v)}
-            className="w-full flex items-center justify-center md:justify-start gap-3 px-3 py-2 rounded-lg
-              text-[13px] font-semibold text-slate-700 hover:bg-slate-100"
+            className="w-full flex items-center justify-center md:justify-start gap-3 px-3 py-2 rounded-lg text-[13px] font-semibold text-slate-700 hover:bg-slate-100"
           >
             {collapsed ? (
               <Folder size={22} />
@@ -143,8 +174,7 @@ const Sidebar = ({ open, onClose }) => {
 
               <button
                 onClick={() => setLulusanOpen((v) => !v)}
-                className="w-full flex items-center justify-between px-3 py-1.5
-    text-[13px] text-slate-600 hover:bg-slate-100 rounded"
+                className="w-full flex items-center justify-between px-3 py-1.5 text-[13px] text-slate-600 hover:bg-slate-100 rounded"
               >
                 <span>3. Kompetensi Lulusan</span>
                 <ChevronDown
@@ -187,8 +217,7 @@ const Sidebar = ({ open, onClose }) => {
 
               <button
                 onClick={() => setTilcOpen((v) => !v)}
-                className="w-full flex items-center justify-between px-3 py-1.5
-    text-[13px] text-slate-600 hover:bg-slate-100 rounded"
+                className="w-full flex items-center justify-between px-3 py-1.5 text-[13px] text-slate-600 hover:bg-slate-100 rounded"
               >
                 <span>9. Integrasi TILC</span>
                 <ChevronDown

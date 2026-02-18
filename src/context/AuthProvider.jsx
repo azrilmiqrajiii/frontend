@@ -9,7 +9,10 @@ export default function AuthProvider({ children }) {
   const loadUser = async () => {
     try {
       const res = await authAPI.me();
-      setUser(res.data);
+      setUser({
+        ...res.data,
+        isSupervisorTILC: res.data?.isSupervisorTILC ?? false,
+      });
     } catch {
       setUser(null);
     } finally {
