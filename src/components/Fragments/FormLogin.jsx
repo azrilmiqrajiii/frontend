@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import Button from "../Elements/Button";
 import InputForm from "../Elements/Input";
 import { authAPI } from "../../api";
@@ -14,6 +15,7 @@ const FormLogin = () => {
     password: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -70,15 +72,25 @@ const FormLogin = () => {
         onChange={handleChange}
       />
 
-      <InputForm
-        htmlFor="password"
-        title="Password"
-        type="password"
-        name="password"
-        placeholder="••••••••"
-        value={form.password}
-        onChange={handleChange}
-      />
+      <div className="relative">
+        <InputForm
+          htmlFor="password"
+          title="Password"
+          type={showPassword ? "text" : "password"}
+          name="password"
+          placeholder="••••••••"
+          value={form.password}
+          onChange={handleChange}
+        />
+
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-3 top-9 text-slate-400 hover:text-slate-600 transition"
+        >
+          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+      </div>
 
       <Button type="submit" className="w-full" loading={loading}>
         Masuk

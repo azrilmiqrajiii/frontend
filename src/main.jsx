@@ -28,6 +28,13 @@ import MahasiswaGuard from "./auth/MahasiswaGuard.jsx";
 import MahasiswaDashboard from "./pages/mahasiswa/dashboard.jsx";
 import MahasiswaEntry from "./auth/MahasiswaEntry.jsx";
 import ChangePasswordGuard from "./auth/ChangePasswordGuard.jsx";
+import DosenLayouts from "./components/Layouts/DosenLayouts.jsx";
+import DosenEntry from "./auth/DosenEntry.jsx";
+import ChangePasswordGuardDosen from "./auth/ChangePasswordGuardDosen.jsx";
+import DosenChangePassword from "./pages/dosen/dosenChangePassword.jsx";
+import DosenCompleteProfile from "./pages/dosen/dosenCompleteProfile.jsx";
+import DosenGuard from "./auth/DosenGuard.jsx";
+import DosenDashboard from "./pages/dosen/dosenDashboard.jsx";
 
 const router = createBrowserRouter([
   {
@@ -81,15 +88,28 @@ const router = createBrowserRouter([
       </RequireAuth>
     ),
   },
+  {
+    path: "/dosen",
+    element: <DosenLayouts />,
+    children: [
+      { index: true, element: <DosenEntry /> },
 
-  // {
-  //   path: "/dosen",
-  //   element: (
-  //     <RequireAuth role="DOSEN">
-  //       <Dosen />
-  //     </RequireAuth>
-  //   ),
-  // },
+      {
+        element: <ChangePasswordGuardDosen />,
+        children: [
+          { path: "change-password", element: <DosenChangePassword /> },
+        ],
+      },
+
+      { path: "complete-profile", element: <DosenCompleteProfile /> },
+
+      {
+        element: <DosenGuard />,
+        children: [{ path: "dashboard", element: <DosenDashboard /> }],
+      },
+    ],
+  },
+
   {
     path: "/mahasiswa",
     element: <MahasiswaLayouts />,
