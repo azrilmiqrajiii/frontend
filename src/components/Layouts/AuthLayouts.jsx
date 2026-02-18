@@ -28,7 +28,7 @@ const AuthLayouts = ({ children, title }) => {
                       p-6 sm:p-8 lg:p-10"
       >
         <div className="flex justify-center mb-4">
-          <  
+          <img
             src={logo}
             alt="Poltekpar Lombok"
             className="h-12 sm:h-16 object-contain"
