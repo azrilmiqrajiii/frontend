@@ -178,21 +178,25 @@ export default function Kurikulum() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-lg font-semibold">Kurikulum Program Studi</h1>
+          <h1 className="text-2xl font-semibold text-slate-800">
+            Kurikulum Program Studi
+          </h1>
           <p
-            className={`text-xs ${dirty ? "text-amber-600" : "text-emerald-600"}`}
+            className={`text-sm mt-1 ${
+              dirty ? "text-amber-600" : "text-emerald-600"
+            }`}
           >
-            {dirty ? "Belum disimpan" : "Tersimpan"}
+            {dirty ? "Perubahan belum disimpan" : "Semua perubahan tersimpan"}
           </p>
         </div>
 
         <select
           value={year}
           onChange={(e) => setYear(e.target.value)}
-          className="px-3 py-2 rounded-lg shadow bg-white"
+          className="px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-medium shadow-sm focus:ring-2 focus:ring-[#1E6F9F]/30 outline-none transition"
         >
           {YEARS.map((y) => (
             <option key={y}>{y}</option>
@@ -200,52 +204,58 @@ export default function Kurikulum() {
         </select>
       </div>
 
-      <div className="flex gap-4 ">
-        <div className="flex-1 overflow-auto rounded-t-lg bg-white shadow">
-          <table className="min-w-300 w-full text-sm text-slate-700 border-collapse shadow">
+      <div className="flex gap-6">
+        <div className="flex-1 overflow-auto rounded-2xl bg-white border border-slate-200 shadow-sm">
+          <table className="min-w-300 w-full text-sm text-slate-700 border-collapse">
             <thead>
-              <tr className="bg-[#13394f] text-white rounded">
+              <tr className="bg-gradient-to-r from-slate-700 to-slate-800 text-white">
                 <th
                   rowSpan={2}
-                  className="px-4 py-4 text-center  border  bg-slate-400"
+                  className="px-4 py-4 text-center border border-slate-600"
                 >
                   No
                 </th>
                 <th
                   rowSpan={2}
-                  className="px-4 py-4 text-center border bg-slate-400"
+                  className="px-4 py-4 text-center border border-slate-600"
                 >
                   Semester
                 </th>
                 <th
                   rowSpan={2}
-                  className="px-4 py-4 text-center border bg-slate-400"
+                  className="px-4 py-4 text-center border border-slate-600"
                 >
                   Kode
                 </th>
                 <th
                   rowSpan={2}
-                  className="px-6 py-4 text-center border bg-slate-400"
+                  className="px-6 py-4 text-center border border-slate-600"
                 >
                   Nama Mata Kuliah
                 </th>
                 <th
                   colSpan={3}
-                  className="px-6 py-4 text-center border bg-slate-400"
+                  className="px-6 py-4 text-center border border-slate-600"
                 >
                   Bobot Kredit (SKS)
                 </th>
                 <th
                   rowSpan={2}
-                  className="px-6 py-4 text-center border bg-slate-400"
+                  className="px-6 py-4 text-center border border-slate-600"
                 >
                   RPS
                 </th>
               </tr>
               <tr className="bg-slate-700 text-white">
-                <th className="px-3 py-2 text-center border">Kuliah</th>
-                <th className="px-3 py-2 text-center border">Seminar</th>
-                <th className="px-3 py-2 text-center border">Praktikum</th>
+                <th className="px-3 py-2 text-center border border-slate-600">
+                  Kuliah
+                </th>
+                <th className="px-3 py-2 text-center border border-slate-600">
+                  Seminar
+                </th>
+                <th className="px-3 py-2 text-center border border-slate-600">
+                  Praktikum
+                </th>
               </tr>
             </thead>
 
@@ -255,81 +265,84 @@ export default function Kurikulum() {
                   key={r._id || i}
                   onClick={() => setActive(i)}
                   className={`
-            transition
-            ${i % 2 === 0 ? "bg-slate-50" : "bg-white"}
-            ${active === i ? "bg-[#1E6F9F]/15" : "hover:bg-slate-100"} 
-          `}
+                  transition
+                  ${i % 2 === 0 ? "bg-slate-50" : "bg-white"}
+                  ${
+                    active === i
+                      ? "bg-[#1E6F9F]/10 ring-1 ring-inset ring-[#1E6F9F]/30"
+                      : "hover:bg-slate-100"
+                  }
+                `}
                 >
-                  <td className="px-4 py-3 text-center  border border-slate-200 font-medium">
+                  <td className="px-4 py-3 text-center border border-slate-200 font-medium">
                     {i + 1}
                   </td>
 
-                  <td className="px-4 py-3 text-center  border border-slate-200 ">
+                  <td className="px-4 py-3 text-center border border-slate-200">
                     <input
                       value={r.semester}
                       onChange={(e) => update(i, "semester", e.target.value)}
-                      className="w-full bg-transparent text-center outline-none rounded-md px-2 py-1 focus:bg-white"
+                      className="w-full bg-transparent text-center outline-none rounded-md px-2 py-1 focus:bg-white focus:ring-1 focus:ring-[#1E6F9F]/30 transition"
                     />
                   </td>
 
-                  <td className="px-4 py-3 text-center  border border-slate-200 font-mono">
+                  <td className="px-4 py-3 text-center border border-slate-200 font-mono">
                     <input
                       value={r.kode}
                       onChange={(e) => update(i, "kode", e.target.value)}
-                      className="w-full bg-transparent text-center outline-none px-2 py-1 rounded-md focus:bg-white"
+                      className="w-full bg-transparent text-center outline-none rounded-md px-2 py-1 focus:bg-white focus:ring-1 focus:ring-[#1E6F9F]/30 transition"
                     />
                   </td>
 
-                  <td className="px-6 py-3">
-                    {" "}
+                  <td className="px-6 py-3 border border-slate-200">
                     <input
                       value={r.nama}
                       onChange={(e) => update(i, "nama", e.target.value)}
-                      className="w-full bg-transparent outline-none px-3 py-1.5 rounded-md focus:bg-white"
+                      className="w-full bg-transparent outline-none px-3 py-1.5 rounded-md focus:bg-white focus:ring-1 focus:ring-[#1E6F9F]/30 transition"
                     />
                   </td>
 
-                  <td className="px-3 py-3 text-center  border border-slate-200">
+                  <td className="px-3 py-3 text-center border border-slate-200">
                     <SkCheckbox
                       active={r.sksKuliah}
                       onClick={() => setSks(i, "sksKuliah")}
                     />
                   </td>
 
-                  <td className="px-3 py-3 text-center  border border-slate-200">
+                  <td className="px-3 py-3 text-center border border-slate-200">
                     <SkCheckbox
                       active={r.sksSeminar}
                       onClick={() => setSks(i, "sksSeminar")}
                     />
                   </td>
 
-                  <td className="px-3 py-3 text-center  border border-slate-200">
+                  <td className="px-3 py-3 text-center border border-slate-200">
                     <SkCheckbox
                       active={r.sksPraktikum}
                       onClick={() => setSks(i, "sksPraktikum")}
                     />
                   </td>
 
-                  <td className="px-6 py-3 text-center  border border-slate-200">
+                  <td className="px-6 py-3 text-center border border-slate-200">
                     {r._id ? (
                       r.rps ? (
                         <div className="flex items-center justify-center gap-2">
                           <a
                             href={r.rps}
                             target="_blank"
-                            className="text-xs text-cyan-600 underline truncate max-w-36"
+                            className="text-xs text-[#1E6F9F] underline truncate max-w-36 hover:text-[#15557A] transition"
                           >
                             {cleanName(r.rps)}
                           </a>
                           <button
                             onClick={() => removeRps(r)}
-                            className="text-red-500 hover:text-red-600"
+                            className="text-red-500 hover:text-red-600 transition"
                           >
                             <Trash2 size={14} />
                           </button>
                         </div>
                       ) : (
-                        <label className="inline-flex items-center gap-1 text-xs cursor-pointer text-slate-600 hover:text-[#1E6F9F]">
+                        <label className="inline-flex items-center gap-1 text-xs cursor-pointer text-slate-600 hover:text-[#1E6F9F] transition">
                           <Upload size={14} />
                           Upload
                           <input
@@ -354,7 +367,7 @@ export default function Kurikulum() {
           </table>
         </div>
 
-        <div className="flex flex-col gap-2 pt-14 shrink-0">
+        <div className="flex flex-col gap-3 pt-14 shrink-0">
           <IconButton icon={Plus} label="Tambah baris" onClick={addRow} />
           <IconButton
             icon={ArrowUp}
@@ -390,6 +403,7 @@ export default function Kurikulum() {
             setDirty(true);
           }}
         />
+
         <Button onClick={save} loading={loading}>
           Simpan
         </Button>

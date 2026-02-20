@@ -108,7 +108,7 @@ const PrestasiMahasiswa = () => {
     rows.map((r, i) => (
       <tr
         key={r._id || r.__key}
-        className="odd:bg-white even:bg-slate-50 hover:bg-slate-100 transition"
+        className="w-full bg-transparent outline-none px-2 py-1 rounded-md focus:bg-white focus:ring-1 focus:ring-[#1E6F9F]/30 transition"
       >
         <td className="border border-slate-300 px-3 py-2 text-center">
           {i + 1}
@@ -128,7 +128,7 @@ const PrestasiMahasiswa = () => {
           <td key={t} className="border border-slate-300 px-3 py-2 text-center">
             <input
               type="radio"
-              className="accent-[#1E6F9F]"
+              className="accent-[#1E6F9F] scale-110 cursor-pointer"
               checked={r.tingkat === t}
               onChange={() => update(rows, setRows, i, "tingkat", t)}
             />
@@ -152,7 +152,7 @@ const PrestasiMahasiswa = () => {
                 href={r.bukti}
                 target="_blank"
                 rel="noreferrer"
-                className="text-[#1E6F9F] underline underline-offset-2 hover:opacity-80"
+                className="text-[#1E6F9F] underline underline-offset-2 hover:text-[#15557A] transition"
               >
                 Lihat
               </a>
@@ -176,7 +176,7 @@ const PrestasiMahasiswa = () => {
         <td className="border border-slate-300 px-3 py-2 text-center">
           <button
             onClick={() => remove(rows, setRows, i)}
-            className="p-1 rounded hover:bg-red-100 transition"
+            className="p-2 rounded-lg hover:bg-red-100 transition"
           >
             <Trash2 size={15} className="text-red-600" />
           </button>
@@ -185,39 +185,45 @@ const PrestasiMahasiswa = () => {
     ));
 
   const Table = ({ title, subtitle, rows, setRows }) => (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div>
-        <h3 className="font-semibold text-slate-800">{title}</h3>
+        <h3 className="text-lg font-semibold text-slate-800">{title}</h3>
         <p className="text-sm text-slate-500">{subtitle}</p>
       </div>
 
-      <div className="overflow-x-auto bg-white border border-slate-300 rounded-lg">
+      <div className="overflow-x-auto bg-white border border-slate-200 rounded-2xl shadow-sm">
         <table className="w-full min-w-225 text-sm border-collapse">
-          <thead className="bg-[#5593b7] text-white text-center">
-            <tr>
-              <th rowSpan={2} className="border border-slate-300 px-3 py-2">
+          <thead>
+            <tr className="bg-gradient-to-r from-slate-700 to-slate-800 text-white text-center">
+              <th
+                rowSpan={2}
+                className="border border-slate-600 px-4 py-3 rounded-tl-2xl"
+              >
                 No
               </th>
-              <th rowSpan={2} className="border border-slate-300 px-3 py-2">
+              <th rowSpan={2} className="border border-slate-600 px-4 py-3">
                 Nama Kegiatan
               </th>
-              <th colSpan={3} className="border border-slate-300 px-3 py-2">
+              <th colSpan={3} className="border border-slate-600 px-4 py-3">
                 Tingkat
               </th>
-              <th rowSpan={2} className="border border-slate-300 px-3 py-2">
+              <th rowSpan={2} className="border border-slate-600 px-4 py-3">
                 Prestasi
               </th>
-              <th rowSpan={2} className="border border-slate-300 px-3 py-2">
+              <th rowSpan={2} className="border border-slate-600 px-4 py-3">
                 Bukti
               </th>
-              <th rowSpan={2} className="border border-slate-300 px-3 py-2">
+              <th
+                rowSpan={2}
+                className="border border-slate-600 px-4 py-3 rounded-tr-2xl"
+              >
                 Aksi
               </th>
             </tr>
-            <tr>
-              <th className="border border-slate-300 px-3 py-2">Wilayah</th>
-              <th className="border border-slate-300 px-3 py-2">Nasional</th>
-              <th className="border border-slate-300 px-3 py-2">
+            <tr className="bg-slate-600 text-white text-center">
+              <th className="border border-slate-600 px-3 py-2">Wilayah</th>
+              <th className="border border-slate-600 px-3 py-2">Nasional</th>
+              <th className="border border-slate-600 px-3 py-2">
                 Internasional
               </th>
             </tr>
@@ -226,7 +232,20 @@ const PrestasiMahasiswa = () => {
         </table>
       </div>
 
-      <Button onClick={() => setRows([...rows, newRow()])} className="w-fit">
+      <Button
+        onClick={() => setRows([...rows, newRow()])}
+        className="
+    px-6 py-3
+    rounded-xl
+    text-sm font-semibold
+    bg-gradient-to-r from-[#1E6F9F] to-[#15557A]
+    hover:from-[#15557A] hover:to-[#0F3D62]
+    text-white
+    shadow-[0_10px_30px_rgba(30,111,159,0.35)]
+    active:scale-[0.98]
+    transition-all duration-200
+  "
+      >
         Tambah Baris
       </Button>
     </div>
@@ -238,15 +257,30 @@ const PrestasiMahasiswa = () => {
         <select
           value={tahun}
           onChange={(e) => setTahun(Number(e.target.value))}
-          className="px-5 py-3 rounded-xl bg-white border border-slate-300 shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[rgba(30,111,159,0.35)]"
+          className="px-5 py-3 rounded-xl bg-white border border-slate-300 shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1E6F9F]/30 transition"
         >
           {years.map((y) => (
             <option key={y}>{y}</option>
           ))}
         </select>
-
-        <Button onClick={saveAll} disabled={loading}>
-          <Save size={16} /> Simpan
+        <Button
+          onClick={saveAll}
+          disabled={loading}
+          className="
+    px-7 py-3
+    rounded-xl
+    text-sm font-semibold tracking-wide
+    bg-gradient-to-r from-emerald-600 to-emerald-700
+    hover:from-emerald-700 hover:to-emerald-800
+    text-white
+    shadow-[0_10px_30px_rgba(16,185,129,0.35)]
+    hover:shadow-[0_14px_36px_rgba(16,185,129,0.45)]
+    active:scale-[0.98]
+    transition-all duration-200
+  "
+        >
+          <Save size={16} />
+          {loading ? "Menyimpan..." : "Simpan Perubahan"}
         </Button>
       </div>
 

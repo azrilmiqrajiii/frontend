@@ -125,8 +125,14 @@ const WaktuTungguLulusan = () => {
       {/* TABLE */}
       <div className="overflow-x-auto bg-white border border-slate-300 rounded-xl">
         <table className="min-w-275 w-full text-sm border-collapse">
-          <thead className="bg-[#1E6F9F] text-white">
+          <thead className="bg-linear-to-r from-slate-700 to-slate-800 text-white">
             <tr>
+              <th
+                rowSpan={2}
+                className="border border-slate-300 px-3 py-2 text-center"
+              >
+                No
+              </th>
               <th
                 rowSpan={2}
                 className="border border-slate-300 px-3 py-2 text-left"
@@ -183,6 +189,10 @@ const WaktuTungguLulusan = () => {
                 key={i}
                 className="odd:bg-white even:bg-slate-50 hover:bg-slate-100 transition"
               >
+                <td className="border border-slate-300 px-3 py-2 text-center font-medium">
+                  {i + 1}
+                </td>
+
                 <td className="border border-slate-300 px-3 py-2">
                   <input
                     value={r.bulanWisuda}
@@ -215,9 +225,14 @@ const WaktuTungguLulusan = () => {
                 <td className="border border-slate-300 px-2 py-2 text-center">
                   <button
                     onClick={() => removeRow(i)}
-                    className="inline-flex items-center justify-center
-                    h-8 w-8 rounded-full text-red-600
-                    hover:bg-red-100 transition"
+                    className="
+  inline-flex items-center justify-center
+  h-9 w-9
+  rounded-lg
+  text-red-600
+  hover:bg-red-100
+  transition-all duration-150
+"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -231,12 +246,22 @@ const WaktuTungguLulusan = () => {
       {/* ADD ROW */}
       <Button
         onClick={() => setRows([...rows, { ...emptyRow }])}
-        className="inline-flex items-center gap-2 px-6 py-3 rounded-full
-  bg-blue text-slate-300
-  hover:bg-[#1E6F9F]/20
-  transition"
+        className="
+    inline-flex items-center gap-2
+    px-6 py-3
+    rounded-xl
+    text-sm font-semibold
+    bg-linear-to-r from-[#1E6F9F] to-[#15557A]
+    hover:from-[#15557A] hover:to-[#0F3D62]
+    text-white
+    shadow-[0_8px_24px_rgba(30,111,159,0.35)]
+    hover:shadow-[0_12px_28px_rgba(30,111,159,0.45)]
+    active:scale-[0.98]
+    transition-all duration-200
+  "
       >
-        <Plus size={16} /> Tambah Baris
+        <Plus size={16} />
+        Tambah Baris
       </Button>
 
       {/* FILE */}
@@ -265,11 +290,22 @@ const WaktuTungguLulusan = () => {
       <div className="flex">
         <Button
           onClick={handleSave}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-full
-          text-white shadow-md transition"
-          style={{ backgroundColor: PRIMARY }}
+          className="
+    inline-flex items-center gap-2
+    px-7 py-3
+    rounded-xl
+    text-sm font-semibold tracking-wide
+    bg-linear-to-r from-emerald-600 to-emerald-700
+    hover:from-emerald-700 hover:to-emerald-800
+    text-white
+    shadow-[0_10px_30px_rgba(16,185,129,0.35)]
+    hover:shadow-[0_14px_36px_rgba(16,185,129,0.45)]
+    active:scale-[0.98]
+    transition-all duration-200
+  "
         >
-          <Save size={16} /> Simpan Data
+          <Save size={16} />
+          Simpan Data
         </Button>
       </div>
     </div>

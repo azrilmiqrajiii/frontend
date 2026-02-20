@@ -61,15 +61,14 @@ export default function CapaianPembelajaran() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* HEADER */}
+    <div className="space-y-8">
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-lg font-semibold text-slate-800">
+          <h2 className="text-2xl font-semibold text-slate-800">
             Capaian Pembelajaran Lulusan
           </h2>
           <p
-            className={`text-sm ${
+            className={`text-sm mt-1 ${
               dirty ? "text-amber-600" : "text-emerald-600"
             }`}
           >
@@ -77,43 +76,53 @@ export default function CapaianPembelajaran() {
           </p>
         </div>
 
-        <Button onClick={save} disabled={loading || !dirty}>
+        <Button
+          onClick={save}
+          disabled={loading || !dirty}
+          className="px-6 py-3 rounded-xl text-sm font-semibold shadow-md
+             disabled:opacity-50"
+        >
           <Save size={16} />
-          {loading ? "Menyimpan..." : "Simpan"}
+          {loading ? "Menyimpan..." : "Simpan Perubahan"}
         </Button>
       </div>
 
-      {/* TABLE */}
-      <div className="overflow-x-auto bg-white rounded-lg border border-slate-200 shadow-sm">
+      <div className="overflow-x-auto bg-white rounded-2xl border border-slate-200 shadow-sm">
         <table className="min-w-300 w-full text-sm text-slate-700 border-collapse">
           <thead>
-            <tr className="bg-slate-700 text-white text-center">
-              <th rowSpan={2} className="border px-4 py-3 rounded-tl-lg">
+            <tr className="bg-linear-to-r from-slate-700 to-slate-800 text-white text-center">
+              <th
+                rowSpan={2}
+                className="border border-slate-600 px-4 py-3 rounded-tl-2xl"
+              >
                 No
               </th>
-              <th rowSpan={2} className="border px-4 py-3">
+              <th rowSpan={2} className="border border-slate-600 px-4 py-3">
                 Tahun Lulus
               </th>
-              <th rowSpan={2} className="border px-4 py-3">
+              <th rowSpan={2} className="border border-slate-600 px-4 py-3">
                 Jumlah Lulusan
               </th>
-              <th rowSpan={2} className="border px-4 py-3">
+              <th rowSpan={2} className="border border-slate-600 px-4 py-3">
                 Masa Studi (Thn)
               </th>
-              <th colSpan={3} className="border px-4 py-3">
+              <th colSpan={3} className="border border-slate-600 px-4 py-3">
                 IPK
               </th>
-              <th rowSpan={2} className="border px-4 py-3">
+              <th rowSpan={2} className="border border-slate-600 px-4 py-3">
                 SK Yudisium
               </th>
-              <th rowSpan={2} className="border px-4 py-3 rounded-tr-lg">
+              <th
+                rowSpan={2}
+                className="border border-slate-600 px-4 py-3 rounded-tr-2xl"
+              >
                 Aksi
               </th>
             </tr>
             <tr className="bg-slate-600 text-white text-center">
-              <th className="px-3 py-2 border">Min</th>
-              <th className="px-3 py-2 border">Rata-rata</th>
-              <th className="px-3 py-2 border">Max</th>
+              <th className="px-3 py-2 border border-slate-600">Min</th>
+              <th className="px-3 py-2 border border-slate-600">Rata-rata</th>
+              <th className="px-3 py-2 border border-slate-600">Max</th>
             </tr>
           </thead>
 
@@ -122,12 +131,12 @@ export default function CapaianPembelajaran() {
               <tr
                 key={r._id || i}
                 className={`
-                  transition
-                  ${i % 2 === 0 ? "bg-white" : "bg-slate-200"}
-                  hover:bg-slate-100
-                `}
+                transition
+                ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}
+                hover:bg-slate-100
+              `}
               >
-                <td className="px-4 py-2 text-center border border-slate-300 font-medium">
+                <td className="px-4 py-3 text-center border border-slate-200 font-medium">
                   {i + 1}
                 </td>
 
@@ -141,30 +150,30 @@ export default function CapaianPembelajaran() {
                 ].map((k) => (
                   <td
                     key={k}
-                    className="px-4 py-2 tex border border-slate-300 text-center"
+                    className="px-4 py-3 border border-slate-200 text-center"
                   >
                     <input
                       type="number"
                       value={r[k] ?? ""}
                       onChange={(e) => update(i, k, e.target.value)}
-                      className="w-full bg-transparent text-center outline-none rounded-md focus:bg-white "
+                      className="w-full bg-transparent text-center outline-none rounded-md px-2 py-1 focus:bg-white focus:ring-1 focus:ring-[#1E6F9F]/30 transition"
                     />
                   </td>
                 ))}
 
-                <td className="px-4 py-2 text-center border border-slate-300 text-sm">
+                <td className="px-4 py-3 text-center border border-slate-200 text-sm">
                   {r._id ? (
                     r.skYudisium ? (
                       <a
                         href={r.skYudisium}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-blue-600 hover:underline"
+                        className="text-[#1E6F9F] hover:text-[#15557A] underline transition"
                       >
                         Lihat
                       </a>
                     ) : (
-                      <label className="inline-flex items-center gap-1 cursor-pointer text-slate-600 hover:text-blue-600">
+                      <label className="inline-flex items-center gap-1 cursor-pointer text-slate-600 hover:text-[#1E6F9F] transition">
                         <Upload size={14} />
                         Upload
                         <input
@@ -186,10 +195,10 @@ export default function CapaianPembelajaran() {
                   )}
                 </td>
 
-                <td className="px-4 py-2 text-center border border-slate-300">
+                <td className="px-4 py-3 text-center border border-slate-200">
                   <button
                     onClick={() => removeRow(i)}
-                    className="text-red-500 hover:bg-red-100 p-1 rounded-md transition"
+                    className="text-red-500 hover:bg-red-100 p-2 rounded-lg transition"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -200,9 +209,12 @@ export default function CapaianPembelajaran() {
         </table>
       </div>
 
-      {/* ADD */}
-      <Button onClick={addRow} className=" text-sm bg-blue-800 rounded-4xl">
-        <Plus size={10} /> Tambah Baris
+      <Button
+        onClick={addRow}
+        className="px-6 py-3 rounded-xl text-sm font-semibold shadow-md"
+      >
+        <Plus size={16} />
+        Tambah Baris
       </Button>
     </div>
   );
