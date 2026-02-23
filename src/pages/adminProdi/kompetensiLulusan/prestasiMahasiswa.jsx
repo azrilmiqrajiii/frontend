@@ -194,7 +194,7 @@ const PrestasiMahasiswa = () => {
       <div className="overflow-x-auto bg-white border border-slate-200 rounded-2xl shadow-sm">
         <table className="w-full min-w-225 text-sm border-collapse">
           <thead>
-            <tr className="bg-gradient-to-r from-slate-700 to-slate-800 text-white text-center">
+            <tr className="bg-gradilinear-to-r from-slate-700 to-slate-800 text-white text-center">
               <th
                 rowSpan={2}
                 className="border border-slate-600 px-4 py-3 rounded-tl-2xl"
@@ -238,7 +238,7 @@ const PrestasiMahasiswa = () => {
     px-6 py-3
     rounded-xl
     text-sm font-semibold
-    bg-gradient-to-r from-[#1E6F9F] to-[#15557A]
+    bg-linear-to-r from-[#1E6F9F] to-[#15557A]
     hover:from-[#15557A] hover:to-[#0F3D62]
     text-white
     shadow-[0_10px_30px_rgba(30,111,159,0.35)]
@@ -270,7 +270,7 @@ const PrestasiMahasiswa = () => {
     px-7 py-3
     rounded-xl
     text-sm font-semibold tracking-wide
-    bg-gradient-to-r from-emerald-600 to-emerald-700
+    bg-linear-to-r from-emerald-600 to-emerald-700
     hover:from-emerald-700 hover:to-emerald-800
     text-white
     shadow-[0_10px_30px_rgba(16,185,129,0.35)]
@@ -290,6 +290,7 @@ const PrestasiMahasiswa = () => {
         rows={akademik}
         setRows={setAkademik}
       />
+
 
       <Table
         title="Prestasi Non-Akademik"
