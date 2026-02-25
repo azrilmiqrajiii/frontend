@@ -39,6 +39,9 @@ import DosenDashboard from "./pages/dosen/dosenDashboard.jsx";
 import DosenChangePassword from "./pages/dosen/dosenChangePassword.jsx";
 import DosenCompleteProfile from "./pages/dosen/dosenCompleteProfile.jsx";
 import ChangePasswordGuardDosen from "./auth/ChangePasswordGuardDosen.jsx";
+import DosenPengampuDashboard from "./pages/dosen/pengampu/dsahboard.jsx";
+import DosenTODDashboard from "./pages/dosen/TOD/dashboard.jsx";
+import DosenKaprodiDashboard from "./pages/dosen/kaprodi/dashboard.jsx";
 
 const router = createBrowserRouter([
   {
@@ -110,7 +113,128 @@ const router = createBrowserRouter([
 
       {
         element: <DosenGuard />,
-        children: [{ path: "dashboard", element: <DosenDashboard /> }],
+        children: [
+          {
+            path: "dashboard",
+            element: <DosenPengampuDashboard />,
+            children: [
+              {
+                index: true,
+                element: (
+                  <div className="text-lg font-semibold">
+                    Dashboard Dosen Pengampu
+                  </div>
+                ),
+              },
+              {
+                path: "profil",
+                element: <div className="text-lg font-semibold">Profil</div>,
+              },
+              {
+                path: "kesesuaian-cpmk",
+                element: (
+                  <div className="text-lg font-semibold">Kesesuaian CPMK</div>
+                ),
+              },
+              {
+                path: "bukti-kinerja",
+                element: (
+                  <div className="text-lg font-semibold">Bukti Kinerja</div>
+                ),
+              },
+              {
+                path: "analisis-kasus",
+                element: (
+                  <div className="text-lg font-semibold">Analisis Kasus</div>
+                ),
+              },
+            ],
+          },
+
+          {
+            path: "tod",
+            element: <DosenTODDashboard />,
+            children: [
+              {
+                index: true,
+                element: (
+                  <div className="text-lg font-semibold">
+                    Dashboard Dosen TOD
+                  </div>
+                ),
+              },
+              {
+                path: "profil",
+                element: <div className="text-lg font-semibold">Profil</div>,
+              },
+              {
+                path: "kesesuaian-cpmk",
+                element: (
+                  <div className="text-lg font-semibold">Kesesuaian CPMK</div>
+                ),
+              },
+              {
+                path: "bukti-kinerja",
+                element: (
+                  <div className="text-lg font-semibold">Bukti Kinerja</div>
+                ),
+              },
+              {
+                path: "analisis-kasus",
+                element: (
+                  <div className="text-lg font-semibold">Analisis Kasus</div>
+                ),
+              },
+              {
+                path: "mahasiswa-incharge",
+                element: (
+                  <div className="text-lg font-semibold">
+                    Mahasiswa Incharge
+                  </div>
+                ),
+              },
+            ],
+          },
+
+          {
+            path: "kaprodi",
+            element: <DosenKaprodiDashboard />,
+            children: [
+              {
+                index: true,
+                element: (
+                  <div className="text-lg font-semibold">Dashboard Kaprodi</div>
+                ),
+              },
+              {
+                path: "profil",
+                element: <div className="text-lg font-semibold">Profil</div>,
+              },
+              {
+                path: "kesesuaian-cpmk",
+                element: (
+                  <div className="text-lg font-semibold">Kesesuaian CPMK</div>
+                ),
+              },
+              {
+                path: "bukti-kinerja",
+                element: (
+                  <div className="text-lg font-semibold">Bukti Kinerja</div>
+                ),
+              },
+              {
+                path: "analisis-kasus",
+                element: (
+                  <div className="text-lg font-semibold">Analisis Kasus</div>
+                ),
+              },
+              {
+                path: "dosen-tod",
+                element: <div className="text-lg font-semibold">Dosen TOD</div>,
+              },
+            ],
+          },
+        ],
       },
     ],
   },
