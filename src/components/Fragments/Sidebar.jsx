@@ -34,7 +34,6 @@ const Sidebar = ({ open, onClose }) => {
   const [kinerjaOpen, setKinerjaOpen] = useState(false);
   const [lulusanOpen, setLulusanOpen] = useState(true);
   const [tilcOpen, setTilcOpen] = useState(false);
-
   const isMahasiswa = user?.role === "MAHASISWA";
   const isSupervisor = isMahasiswa && user?.isSupervisorTILC;
 

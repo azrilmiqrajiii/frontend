@@ -1,40 +1,44 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
+
 import RequireAuth from "./auth/RequireAuth.jsx";
-import LoginPage from "./pages/login.jsx";
+import RequireGuest from "./auth/RequireGuest.jsx";
+import MahasiswaGuard from "./auth/MahasiswaGuard.jsx";
+import ChangePasswordGuard from "./auth/ChangePasswordGuard.jsx";
+import DosenGuard from "./auth/DosenGuard.jsx";
+
 import AuthProvider from "./context/AuthProvider.jsx";
+
 import NotFound from "./pages/notFound.jsx";
-import Unit from "./pages/unit.jsx";
+import LoginPage from "./pages/login.jsx";
 import HomePage from "./pages/home.jsx";
+
+import AdminProdiLayouts from "./components/Layouts/AdminProdiLayouts.jsx";
 import Dashboard from "./pages/adminProdi/Dashboard.jsx";
 import VisiMisi from "./pages/adminProdi/visiMisi.jsx";
-import AdminProdiLayouts from "./components/Layouts/AdminProdiLayouts.jsx";
 import Kurikulum from "./pages/adminProdi/kurikulum.jsx";
-import RequireGuest from "./auth/RequireGuest.jsx";
 import KompetensiLulusan from "./pages/adminProdi/kompetensiLulusan.jsx";
 import CapaianPembelajaran from "./pages/adminProdi/kompetensiLulusan/capaianPembelajaran.jsx";
 import PrestasiMahasiswa from "./pages/adminProdi/kompetensiLulusan/prestasiMahasiswa.jsx";
 import WaktuTungguLulusan from "./pages/adminProdi/kompetensiLulusan/waktuTungguLulusan.jsx";
+
+import Unit from "./pages/unit.jsx";
+
 import MahasiswaLayouts from "./components/Layouts/MahasiswaLayouts.jsx";
+import MahasiswaDashboard from "./pages/mahasiswa/regular/dashboard.jsx";
+import SupervisorDashboard from "./pages/mahasiswa/supervisor/dashboard.jsx";
 import ChangePassword from "./pages/mahasiswa/changePassword.jsx";
 import CompleteProfile from "./pages/mahasiswa/completeProfile.jsx";
-import MahasiswaGuard from "./auth/MahasiswaGuard.jsx";
-import MahasiswaDashboard from "./pages/mahasiswa/dashboard.jsx";
 import MahasiswaEntry from "./auth/MahasiswaEntry.jsx";
-import ChangePasswordGuard from "./auth/ChangePasswordGuard.jsx";
+
 import DosenLayouts from "./components/Layouts/DosenLayouts.jsx";
 import DosenEntry from "./auth/DosenEntry.jsx";
-import ChangePasswordGuardDosen from "./auth/ChangePasswordGuardDosen.jsx";
+import DosenDashboard from "./pages/dosen/dosenDashboard.jsx";
 import DosenChangePassword from "./pages/dosen/dosenChangePassword.jsx";
 import DosenCompleteProfile from "./pages/dosen/dosenCompleteProfile.jsx";
-import DosenGuard from "./auth/DosenGuard.jsx";
-import DosenDashboard from "./pages/dosen/dosenDashboard.jsx";
+import ChangePasswordGuardDosen from "./auth/ChangePasswordGuardDosen.jsx";
 
 const router = createBrowserRouter([
   {
@@ -88,6 +92,7 @@ const router = createBrowserRouter([
       </RequireAuth>
     ),
   },
+
   {
     path: "/dosen",
     element: <DosenLayouts />,
@@ -122,7 +127,77 @@ const router = createBrowserRouter([
 
       {
         element: <MahasiswaGuard />,
-        children: [{ path: "dashboard", element: <MahasiswaDashboard /> }],
+        children: [
+          {
+            path: "dashboard",
+            element: <MahasiswaDashboard />,
+            children: [
+              {
+                index: true,
+                element: (
+                  <div className="text-lg font-semibold">
+                    Dashboard Mahasiswa
+                  </div>
+                ),
+              },
+              {
+                path: "profil",
+                element: <div className="text-lg font-semibold">Profil</div>,
+              },
+              {
+                path: "refleksi-harian",
+                element: (
+                  <div className="text-lg font-semibold">
+                    Refleksi Harian Incharge
+                  </div>
+                ),
+              },
+              {
+                path: "penilaian-magang",
+                element: (
+                  <div className="text-lg font-semibold">
+                    Penilaian Tempat Magang
+                  </div>
+                ),
+              },
+            ],
+          },
+
+          {
+            path: "supervisor",
+            element: <SupervisorDashboard />,
+            children: [
+              {
+                index: true,
+                element: (
+                  <div className="text-lg font-semibold">
+                    Dashboard Supervisor
+                  </div>
+                ),
+              },
+              {
+                path: "profil",
+                element: <div className="text-lg font-semibold">Profil</div>,
+              },
+              {
+                path: "dbsh-supervisor",
+                element: (
+                  <div className="text-lg font-semibold">DBSH Supervisor</div>
+                ),
+              },
+              {
+                path: "pesilak",
+                element: <div className="text-lg font-semibold">Pesilak</div>,
+              },
+              {
+                path: "rekap-otomatis",
+                element: (
+                  <div className="text-lg font-semibold">Rekap Otomatis</div>
+                ),
+              },
+            ],
+          },
+        ],
       },
     ],
   },
