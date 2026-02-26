@@ -2,27 +2,42 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { dosenAPI } from "../../api/dosen.api";
 import Button from "../../components/Elements/Button";
-import OnboardingStepper from "../../components/Fragments/OnBoardingStepper";
+import OnboardingStepper from "../../components/Fragments/OnboardingStepper";
 import useAuth from "../../context/useAuth";
+
+const PRODI_OPTIONS = [
+  { label: "Seni Kuliner", value: "SENI_KULINER" },
+  { label: "Divisi Kamar", value: "DIVISI_KAMAR" },
+  { label: "Tata Hidang", value: "TATA_HIDANG" },
+  { label: "Usaha Perjalanan Wisata", value: "USAHA_PERJALANAN_WISATA" },
+];
 
 export default function CompleteProfile() {
   const { refreshUser } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
   const [form, setForm] = useState({
     name: "",
     gelar: "",
     nidn: "",
-    homebase: "",
+    prodi: "",
   });
+
+  const handleChange = (field, value) => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
   const submit = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (!form.name || !form.nidn || !form.homebase)
-      return setError("Nama, NIDN/NOPTK, dan Homebase wajib diisi");
+    if (!form.name || !form.nidn || !form.prodi)
+      return setError("Semua data wajib diisi");
 
     setLoading(true);
     try {
@@ -30,8 +45,9 @@ export default function CompleteProfile() {
         name: form.name.trim(),
         gelar: form.gelar.trim(),
         nidn: form.nidn.trim(),
-        homebase: form.homebase.trim(),
+        prodi: form.prodi,
       });
+
       await refreshUser();
       navigate("/dosen/dashboard", { replace: true });
     } catch (err) {
@@ -42,9 +58,10 @@ export default function CompleteProfile() {
   };
 
   return (
-    <div className="flex justify-center pt-14">
+    <div className="flex justify-center pt-14 px-4">
       <div className="w-full max-w-xl">
         <OnboardingStepper step={2} />
+
         <form
           onSubmit={submit}
           className="w-full rounded-xl bg-white p-6 shadow-sm"
@@ -69,7 +86,7 @@ export default function CompleteProfile() {
               </label>
               <input
                 value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                onChange={(e) => handleChange("name", e.target.value)}
                 className="mt-1 w-full rounded border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-300"
                 placeholder="Nama lengkap tanpa singkatan"
               />
@@ -81,7 +98,7 @@ export default function CompleteProfile() {
               </label>
               <input
                 value={form.gelar}
-                onChange={(e) => setForm({ ...form, gelar: e.target.value })}
+                onChange={(e) => handleChange("gelar", e.target.value)}
                 className="mt-1 w-full rounded border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-300"
                 placeholder="Contoh: M.Kom (opsional)"
               />
@@ -93,7 +110,7 @@ export default function CompleteProfile() {
               </label>
               <input
                 value={form.nidn}
-                onChange={(e) => setForm({ ...form, nidn: e.target.value })}
+                onChange={(e) => handleChange("nidn", e.target.value)}
                 className="mt-1 w-full rounded border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-300"
                 placeholder="Nomor Induk Dosen"
               />
@@ -101,14 +118,20 @@ export default function CompleteProfile() {
 
             <div className="md:col-span-2">
               <label className="text-sm font-medium text-slate-700">
-                Homebase
+                Program Studi
               </label>
-              <input
-                value={form.homebase}
-                onChange={(e) => setForm({ ...form, homebase: e.target.value })}
+              <select
+                value={form.prodi}
+                onChange={(e) => handleChange("prodi", e.target.value)}
                 className="mt-1 w-full rounded border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-300"
-                placeholder="Program Studi / Unit"
-              />
+              >
+                <option value="">Pilih Program Studi</option>
+                {PRODI_OPTIONS.map((p) => (
+                  <option key={p.value} value={p.value}>
+                    {p.label}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 

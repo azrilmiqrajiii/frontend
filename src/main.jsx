@@ -42,8 +42,27 @@ import ChangePasswordGuardDosen from "./auth/ChangePasswordGuardDosen.jsx";
 import DosenPengampuDashboard from "./pages/dosen/pengampu/dsahboard.jsx";
 import DosenTODDashboard from "./pages/dosen/TOD/dashboard.jsx";
 import DosenKaprodiDashboard from "./pages/dosen/kaprodi/dashboard.jsx";
+import SPMDashboard from "./pages/spm/dashboard.jsx";
+import SPMLayouts from "./components/Layouts/spmLayouts.jsx";
+import SPMGuard from "./auth/SPMGuard.jsx";
+import SPMDashboardLayout from "./components/Layouts/SPMDashboardLayouts.jsx";
 
 const router = createBrowserRouter([
+  {
+    path: "/spm",
+    element: <SPMLayouts />,
+    children: [
+      {
+        element: <SPMGuard />,
+        children: [
+          {
+            element: <SPMDashboardLayout />,
+            children: [{ index: true, element: <SPMDashboard /> }],
+          },
+        ],
+      },
+    ],
+  },
   {
     path: "/",
     element: (

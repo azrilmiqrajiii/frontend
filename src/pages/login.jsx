@@ -10,6 +10,9 @@ export default function LoginPage() {
 
   if (user) {
     switch (user.role) {
+      case "SPM":
+        return <Navigate to="/spm" replace />;
+
       case "ADMIN_PRODI":
         return <Navigate to="/admin-prodi" replace />;
 

@@ -116,9 +116,9 @@ export default function DosenDashboardLayout({
       </aside>
 
       <div className="flex-1 flex flex-col">
-        <header className="border-b border-slate-200 px-6 py-4 bg-white">
+        {/* <header className="border-b border-slate-200 px-6 py-4 bg-white">
           <h1 className="text-sm font-semibold text-slate-700">{title}</h1>
-        </header>
+        </header> */}
 
         <main className="flex-1 p-6 bg-slate-50">
           <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
