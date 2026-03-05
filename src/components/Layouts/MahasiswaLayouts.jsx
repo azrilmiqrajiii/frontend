@@ -12,7 +12,7 @@ export default function MahasiswaLayouts() {
   return (
     <div className="min-h-screen bg-slate-100">
       <NavbarMahasiswa />
-      <main className="p-6">
+      <main className="">
         <Outlet />
       </main>
     </div>

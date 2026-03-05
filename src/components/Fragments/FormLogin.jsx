@@ -1,74 +1,68 @@
-import { useState } from "react"
-import { Eye, EyeOff } from "lucide-react"
-import Button from "../Elements/Button"
-import InputForm from "../Elements/Input"
-import { authAPI } from "../../api"
-import useAuth from "../../context/useAuth"
-import { useNavigate } from "react-router-dom"
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import Button from "../Elements/Button";
+import InputForm from "../Elements/Input";
+import { authAPI } from "../../api";
+import useAuth from "../../context/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const FormLogin = () => {
-  const { refreshUser } = useAuth()
-  const navigate = useNavigate()
+  const { refreshUser } = useAuth();
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     email: "",
     password: "",
-  })
+  });
 
-  const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const validateEmail = (email) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleChange = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value,
-    })
-  }
+    });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!form.email || !form.password) {
-      setError("Email dan password wajib diisi")
-      return
+      setError("Email dan password wajib diisi");
+      return;
     }
 
     if (!validateEmail(form.email)) {
-      setError("Format email tidak valid")
-      return
+      setError("Format email tidak valid");
+      return;
     }
 
-    setError("")
-    setLoading(true)
+    setError("");
+    setLoading(true);
 
     try {
       await authAPI.login({
         email: form.email.trim(),
         password: form.password,
-      })
+      });
 
-      await refreshUser()
-      navigate("/mahasiswa/dashboard", { replace: true })
+      await refreshUser();
+      navigate("/mahasiswa/dashboard", { replace: true });
     } catch (err) {
       setError(
-        err?.response?.data?.message ||
-          "Login gagal. Silakan coba lagi."
-      )
+        err?.response?.data?.message || "Login gagal. Silakan coba lagi.",
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-6"
-      noValidate
-    >
+    <form onSubmit={handleSubmit} className="space-y-6" noValidate>
       {error && (
         <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
           {error}
@@ -117,7 +111,7 @@ const FormLogin = () => {
         Masuk
       </Button>
     </form>
-  )
-}
+  );
+};
 
-export default FormLogin
+export default FormLogin;

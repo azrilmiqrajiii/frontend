@@ -46,6 +46,8 @@ import SPMDashboard from "./pages/spm/dashboard.jsx";
 import SPMLayouts from "./components/Layouts/spmLayouts.jsx";
 import SPMGuard from "./auth/SPMGuard.jsx";
 import SPMDashboardLayout from "./components/Layouts/SPMDashboardLayouts.jsx";
+import DosenTOD from "./pages/dosen/kaprodi/dosenTOD.jsx";
+import MahasiswaIncharge from "./pages/dosen/TOD/mahasiswaIncharge.jsx";
 
 const router = createBrowserRouter([
   {
@@ -206,11 +208,7 @@ const router = createBrowserRouter([
               },
               {
                 path: "mahasiswa-incharge",
-                element: (
-                  <div className="text-lg font-semibold">
-                    Mahasiswa Incharge
-                  </div>
-                ),
+                element: <MahasiswaIncharge />,
               },
             ],
           },
@@ -249,7 +247,7 @@ const router = createBrowserRouter([
               },
               {
                 path: "dosen-tod",
-                element: <div className="text-lg font-semibold">Dosen TOD</div>,
+                element: <DosenTOD />,
               },
             ],
           },
