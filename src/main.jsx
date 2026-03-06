@@ -48,6 +48,8 @@ import SPMGuard from "./auth/SPMGuard.jsx";
 import SPMDashboardLayout from "./components/Layouts/SPMDashboardLayouts.jsx";
 import DosenTOD from "./pages/dosen/kaprodi/dosenTOD.jsx";
 import MahasiswaIncharge from "./pages/dosen/TOD/mahasiswaIncharge.jsx";
+import RefleksiHarian from "./pages/mahasiswa/regular/refleksiHarian.jsx";
+import ProfilMahasiswa from "./pages/mahasiswa/regular/profil.jsx";
 
 const router = createBrowserRouter([
   {
@@ -283,15 +285,11 @@ const router = createBrowserRouter([
               },
               {
                 path: "profil",
-                element: <div className="text-lg font-semibold">Profil</div>,
+                element: <ProfilMahasiswa />,
               },
               {
                 path: "refleksi-harian",
-                element: (
-                  <div className="text-lg font-semibold">
-                    Refleksi Harian Incharge
-                  </div>
-                ),
+                element: <RefleksiHarian />,
               },
               {
                 path: "penilaian-magang",

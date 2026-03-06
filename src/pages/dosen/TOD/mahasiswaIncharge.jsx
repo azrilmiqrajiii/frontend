@@ -1,16 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "../../../api/axios";
-import { User2, CheckCircle2, Loader2 } from "lucide-react";
+import { User2, CheckCircle2, Loader2, Search } from "lucide-react";
 
 export default function MahasiswaIncharge() {
   const [mahasiswa, setMahasiswa] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState(null);
 
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [filter, setFilter] = useState("ALL");
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setDebouncedSearch(search.trim().toLowerCase());
+    }, 300);
+    return () => clearTimeout(t);
+  }, [search]);
+
   const fetchData = async () => {
     try {
       const res = await axios.get("/tod/mahasiswa");
-      setMahasiswa(res.data.data);
+      setMahasiswa(res.data.data || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -18,20 +29,22 @@ export default function MahasiswaIncharge() {
     }
   };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const toggleSupervisor = async (id, isActive) => {
     const confirmAction = window.confirm(
       isActive
         ? "Nonaktifkan mahasiswa ini sebagai Supervisor TILC?"
         : "Tetapkan mahasiswa ini sebagai Supervisor TILC?",
     );
-
     if (!confirmAction) return;
 
     setProcessingId(id);
-
     try {
       await axios.patch(`/tod/set-supervisor/${id}`);
-      fetchData();
+      await fetchData();
     } catch (err) {
       console.error(err);
     } finally {
@@ -39,9 +52,28 @@ export default function MahasiswaIncharge() {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // FILTER + SEARCH
+  const filteredMahasiswa = useMemo(() => {
+    let data = [...mahasiswa];
+
+    // filter supervisor
+    if (filter === "SUPERVISOR") {
+      data = data.filter((m) => m.isSupervisorTILC === true);
+    }
+
+    if (filter === "NON_SUPERVISOR") {
+      data = data.filter((m) => m.isSupervisorTILC === false);
+    }
+
+    // search nama / nim
+    if (debouncedSearch) {
+      data = data.filter((m) =>
+        `${m.name} ${m.nim}`.toLowerCase().includes(debouncedSearch),
+      );
+    }
+
+    return data;
+  }, [mahasiswa, debouncedSearch, filter]);
 
   if (loading)
     return (
@@ -63,15 +95,47 @@ export default function MahasiswaIncharge() {
         </p>
       </div>
 
-      {/* LIST MAHASISWA */}
+      {/* SEARCH + FILTER */}
+      <div className="flex flex-wrap items-center gap-4">
+        {/* SEARCH */}
+        <div className="relative w-full max-w-sm">
+          <Search
+            size={16}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+          />
+
+          <input
+            type="text"
+            placeholder="Cari nama atau NIM..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 shadow-sm
+                       focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          />
+        </div>
+
+        {/* FILTER */}
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="px-4 py-2 rounded-xl border border-slate-200 shadow-sm
+                     focus:outline-none focus:ring-2 focus:ring-emerald-400"
+        >
+          <option value="ALL">Semua Mahasiswa</option>
+          <option value="SUPERVISOR">Supervisor</option>
+          <option value="NON_SUPERVISOR">Non Supervisor</option>
+        </select>
+      </div>
+
+      {/* LIST */}
       <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {mahasiswa.length === 0 && (
+        {filteredMahasiswa.length === 0 && (
           <div className="text-sm text-slate-500">
-            Tidak ada mahasiswa pada program studi ini
+            Mahasiswa tidak ditemukan
           </div>
         )}
 
-        {mahasiswa.map((m) => {
+        {filteredMahasiswa.map((m) => {
           const isActive = m.isSupervisorTILC;
           const isProcessing = processingId === m._id;
 
@@ -99,7 +163,7 @@ export default function MahasiswaIncharge() {
                 )}
               </div>
 
-              {/* BUTTON */}
+              {/* TOGGLE SWITCH */}
               <button
                 disabled={isProcessing}
                 onClick={() => toggleSupervisor(m._id, isActive)}

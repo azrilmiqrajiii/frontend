@@ -67,15 +67,8 @@ function Sidebar({ collapsed, setCollapsed }) {
 
 function ContentWrapper() {
   return (
-    <div className="flex-1 bg-white min-h-screen flex flex-col">
-      <header className="border-b border-slate-200 px-6 py-4">
-        <div className="flex items-center gap-2 text-slate-700">
-          <LayoutDashboard size={18} />
-          <span className="font-medium text-sm">Dashboard Mahasiswa</span>
-        </div>
-      </header>
-
-      <main className="flex-1 p-6">
+    <div className="flex-1 bg-slate-50 min-h-screen flex flex-col">
+      <main className="flex-1 px-8 py-6">
         <Outlet />
       </main>
     </div>
@@ -86,7 +79,7 @@ export default function MahasiswaDashboard() {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="flex w-full min-h-screen bg-white">
+    <div className="flex w-full min-h-screen bg-slate-50">
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
       <ContentWrapper />
     </div>
